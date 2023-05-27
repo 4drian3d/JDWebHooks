@@ -1,6 +1,5 @@
 package io.github._4drian3d.jdwebhooks;
 
-import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +12,24 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Special formatted cell that can contain various elements, such as images, links and so on.
+ * <p><b>Any param can be null</b></p>
+ *
+ * @param title the title of this embed
+ * @param type the type of this embed
+ * @param description description of this embed
+ * @param url title url
+ * @param timestamp timestamp of this embed content
+ * @param color color code of the embed
+ * @param footer footer information of this embed
+ * @param image provided image of this embed
+ * @param thumbnail provided thumbnail of this embed
+ * @param video provided video of this embed
+ * @param provider the provider of the embed
+ * @param author the author of this embed
+ * @param fields fields of this embed
+ */
 @SuppressWarnings({"UnstableApiUsage", "unused", "UnusedReturnValue"})
 public record Embed(
         @Nullable String title,
@@ -30,20 +47,32 @@ public record Embed(
         @Nullable Field[] fields
 ) {
 
+    /**
+     * Creates a new Embed Builder.
+     *
+     * @return a new Embed builder
+     */
     public static Builder builder() {
         return new Builder();
     }
 
     public record Footer(
             @NotNull String text,
-            @SerializedName("icon_url")
             @Nullable String iconURL,
             @Nullable String proxyIconURL
     ) {
+        /**
+         * Creates a new Footer Builder.
+         *
+         * @return a new Footer builder
+         */
         public static Builder builder() {
             return new Builder();
         }
 
+        /**
+         * Footer Builder
+         */
         public static final class Builder {
             private String text;
             private String iconURL;
@@ -77,17 +106,31 @@ public record Embed(
         }
     }
 
+    public interface GraphicResource {
+        String url();
+        String proxyURL();
+        String height();
+        String width();
+    }
+
     public record Thumbnail(
             @NotNull String url,
-            @SerializedName("proxy_url")
             @Nullable String proxyURL,
             @Nullable String height,
             @Nullable String width
-    ) {
+    ) implements GraphicResource {
+        /**
+         * Creates a new Thumbnail Builder.
+         *
+         * @return a new Thumbnail builder
+         */
         public static Builder builder() {
             return new Builder();
         }
 
+        /**
+         * Thumbnail Builder
+         */
         public static final class Builder {
             private String url;
             private String proxyURL;
@@ -130,15 +173,22 @@ public record Embed(
 
     public record Video(
             @NotNull String url,
-            @SerializedName("proxy_url")
             @Nullable String proxyURL,
             @Nullable String height,
             @Nullable String width
-    ) {
+    ) implements GraphicResource {
+        /**
+         * Creates a new Video Builder.
+         *
+         * @return a new Video builder
+         */
         public static Builder builder() {
             return new Builder();
         }
 
+        /**
+         * Video Builder
+         */
         public static final class Builder {
             private String url;
             private String proxyURL;
@@ -181,15 +231,22 @@ public record Embed(
 
     public record Image(
             @NotNull String url,
-            @SerializedName("proxy_url")
             @Nullable String proxyURL,
             @Nullable String height,
             @Nullable String width
-    ) {
+    ) implements GraphicResource {
+        /**
+         * Creates a new Image Builder.
+         *
+         * @return a new Image builder
+         */
         public static Builder builder() {
             return new Builder();
         }
 
+        /**
+         * Image Builder
+         */
         public static final class Builder {
             private String url;
             private String proxyURL;
@@ -234,10 +291,18 @@ public record Embed(
             @Nullable String name,
             @Nullable String url
     ) {
+        /**
+         * Creates a new Provider Builder.
+         *
+         * @return a new Provider builder
+         */
         public static Builder builder() {
             return new Builder();
         }
 
+        /**
+         * Provider Builder
+         */
         public static final class Builder {
             private String name;
             private String url;
@@ -258,18 +323,32 @@ public record Embed(
         }
     }
 
+    //todo
+    /**
+     *
+     * @param name
+     * @param url
+     * @param iconURL
+     * @param proxyIconURL
+     */
     public record Author(
             @NotNull String name,
             @Nullable String url,
-            @SerializedName("icon_url")
             @Nullable String iconURL,
-            @SerializedName("proxy_icon_url")
             @Nullable String proxyIconURL
     ) {
+        /**
+         * Creates a new Author Builder.
+         *
+         * @return a new Author builder
+         */
         public static Builder builder() {
             return new Builder();
         }
 
+        /**
+         * Author Builder
+         */
         public static final class Builder {
             private String name;
             private String url;
@@ -315,10 +394,18 @@ public record Embed(
             @NotNull String name,
             @NotNull String value
     ) {
+        /**
+         * Creates a new Field Builder.
+         *
+         * @return a new Field builder
+         */
         public static Builder builder() {
             return new Builder();
         }
 
+        /**
+         * Field Builder
+         */
         public static final class Builder {
             private Boolean inline;
             private String name;

@@ -1,6 +1,5 @@
 package io.github._4drian3d.jdwebhooks;
 
-import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,20 +12,25 @@ import static java.util.Objects.requireNonNull;
 public record WebHook(
         @NotNull String content,
         @Nullable String username,
-        @SerializedName("avatar_url")
         @Nullable String avatarURL,
         @Nullable Boolean tts,
         @Nullable List<Embed> embeds,
-        @SerializedName("allowed_mentions")
         @Nullable Boolean allowedMentions,
-        @SerializedName("thread_name")
         @Nullable String threadName
 ) {
 
+    /**
+     * Creates a new WebHook Builder.
+     *
+     * @return a new WebHook builder
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * WebHook Builder
+     */
     public static final class Builder {
         private String content = "";
         private String username;
@@ -39,16 +43,36 @@ public record WebHook(
         private Builder() {
         }
 
+        /**
+         * Sets the content string of this embed.
+         * <p>It can be an empty string and in case no content is provided,
+         * an empty string will be used</p>
+         *
+         * @param content the content string
+         * @return this builder
+         */
         public Builder content(final @NotNull String content) {
             this.content = requireNonNull(content, "content");
             return this;
         }
 
+        /**
+         * Sets the override username of this WebHook.
+         *
+         * @param username the override username
+         * @return this builder
+         */
         public Builder username(final @Nullable String username) {
             this.username = requireNonNull(username);
             return this;
         }
 
+        /**
+         * Sets the Avatar URL of this WebHook
+         *
+         * @param avatarURL the Avatar URL
+         * @return this builder
+         */
         public Builder avatarURL(final @Nullable String avatarURL) {
             this.avatarURL = avatarURL;
             return this;
@@ -85,12 +109,12 @@ public record WebHook(
             return this;
         }
 
-        public Builder allowedMentions(Boolean allowedMentions) {
+        public Builder allowedMentions(final @Nullable Boolean allowedMentions) {
             this.allowedMentions = allowedMentions;
             return this;
         }
 
-        public Builder threadName(String threadName) {
+        public Builder threadName(final @Nullable String threadName) {
             this.threadName = threadName;
             return this;
         }
