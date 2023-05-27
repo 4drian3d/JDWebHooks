@@ -41,7 +41,7 @@ indra {
     }
     publishReleasesTo("OSSRH", "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
     publishSnapshotsTo("SonatypeSnapshots",  "https://s01.oss.sonatype.org/content/repositories/snapshots/")
-    gpl3OrLaterLicense()
+    apache2License()
     configurePublications {
         artifactId = "jdwebhooks"
         from(components["java"])

@@ -2,7 +2,6 @@ package io.github._4drian3d.jdwebhooks;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.github._4drian3d.jdwebhooks.serializer.DateSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
