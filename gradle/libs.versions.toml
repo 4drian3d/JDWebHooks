@@ -1,0 +1,16 @@
+metadata.format.version = "1.1"
+
+[versions]
+
+indra = "3.1.1"
+gson = "2.10.1"
+annotations = "24.0.0"
+
+[libraries]
+
+annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+
+[plugins]
+
+indra = { id = "net.kyori.indra.publishing", version.ref = "indra" }

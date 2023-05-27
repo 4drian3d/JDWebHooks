@@ -1,1 +1,1 @@
-rootProject.name = "Discord WebHooks"
+rootProject.name = "JDWebHooks"
