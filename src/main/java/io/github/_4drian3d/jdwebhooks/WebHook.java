@@ -16,7 +16,11 @@ public record WebHook(
         @SerializedName("avatar_url")
         @Nullable String avatarURL,
         @Nullable Boolean tts,
-        @Nullable List<Embed> embeds
+        @Nullable List<Embed> embeds,
+        @SerializedName("allowed_mentions")
+        @Nullable Boolean allowedMentions,
+        @SerializedName("thread_name")
+        @Nullable String threadName
 ) {
 
     public static Builder builder() {
@@ -29,6 +33,8 @@ public record WebHook(
         private String avatarURL;
         private Boolean tts;
         private List<Embed> embeds;
+        private Boolean allowedMentions;
+        private String threadName;
 
         private Builder() {
         }
@@ -79,13 +85,25 @@ public record WebHook(
             return this;
         }
 
+        public Builder allowedMentions(Boolean allowedMentions) {
+            this.allowedMentions = allowedMentions;
+            return this;
+        }
+
+        public Builder threadName(String threadName) {
+            this.threadName = threadName;
+            return this;
+        }
+
         public WebHook build() {
             return new WebHook(
                     this.content,
                     this.username,
                     this.avatarURL,
                     this.tts,
-                    this.embeds
+                    this.embeds,
+                    this.allowedMentions,
+                    this.threadName
             );
         }
     }
