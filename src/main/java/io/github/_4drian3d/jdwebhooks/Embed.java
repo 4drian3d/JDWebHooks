@@ -259,7 +259,7 @@ public record Embed(
     }
 
     public record Author(
-            @NotNull String author,
+            @NotNull String name,
             @Nullable String url,
             @SerializedName("icon_url")
             @Nullable String iconURL,
@@ -271,7 +271,7 @@ public record Embed(
         }
 
         public static final class Builder {
-            private String author;
+            private String name;
             private String url;
             private String iconURL;
             private String proxyIconURL;
@@ -279,8 +279,8 @@ public record Embed(
             private Builder() {
             }
 
-            public Builder author(final @NotNull String author) {
-                this.author = requireNonNull(author, "author");
+            public Builder name(final @NotNull String name) {
+                this.name = requireNonNull(name, "name");
                 return this;
             }
 
@@ -301,7 +301,7 @@ public record Embed(
 
             public Author build() {
                 return new Author(
-                        requireNonNull(this.author, "author"),
+                        requireNonNull(this.name, "name"),
                         this.url,
                         this.iconURL,
                         this.proxyIconURL
