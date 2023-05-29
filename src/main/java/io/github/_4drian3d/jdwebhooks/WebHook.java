@@ -8,6 +8,17 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Object containing all available items to display in a Discord WebHook.
+ *
+ * @param content the message content of this webhook
+ * @param username the username to overwrite the webhook name
+ * @param avatarURL the avatar icon url
+ * @param tts
+ * @param embeds the embeds to attach to this webhook
+ * @param allowedMentions if this webhook can mention users
+ * @param threadName the thread to be created from this webhook
+ */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public record WebHook(
         @NotNull String content,
@@ -18,6 +29,9 @@ public record WebHook(
         @Nullable Boolean allowedMentions,
         @Nullable String threadName
 ) {
+    public WebHook {
+        requireNonNull(content, "content");
+    }
 
     /**
      * Creates a new WebHook Builder.

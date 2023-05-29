@@ -96,6 +96,12 @@ public record Embed(
                 return this;
             }
 
+            /**
+             * Builds a new Footer object.
+             *
+             * @return a new footer
+             * @throws NullPointerException if no text was assigned
+             */
             public Footer build() {
                 return new Footer(
                         requireNonNull(this.text),
@@ -106,6 +112,9 @@ public record Embed(
         }
     }
 
+    /**
+     * An Embed Graphic Element
+     */
     public interface GraphicResource {
         String url();
         String proxyURL();
@@ -113,6 +122,14 @@ public record Embed(
         String width();
     }
 
+    /**
+     * Thumbnail Graphic Element.
+     *
+     * @param url the url of this thumbnail
+     * @param proxyURL the proxy url
+     * @param height the optional height
+     * @param width the optional width
+     */
     public record Thumbnail(
             @NotNull String url,
             @Nullable String proxyURL,
@@ -160,6 +177,12 @@ public record Embed(
                 return this;
             }
 
+            /**
+             * Builds a new Thumbnail object.
+             *
+             * @return a new Thumbnail
+             * @throws NullPointerException if no url was assigned
+             */
             public Thumbnail build() {
                 return new Thumbnail(
                         requireNonNull(this.url),
@@ -171,6 +194,14 @@ public record Embed(
         }
     }
 
+    /**
+     * Video Graphic Element.
+     *
+     * @param url the url of this video
+     * @param proxyURL the proxy url
+     * @param height the optional height
+     * @param width the optional width
+     */
     public record Video(
             @NotNull String url,
             @Nullable String proxyURL,
@@ -218,6 +249,12 @@ public record Embed(
                 return this;
             }
 
+            /**
+             * Builds a new Video object.
+             *
+             * @return a new Video
+             * @throws NullPointerException if no url was assigned
+             */
             public Video build() {
                 return new Video(
                         requireNonNull(this.url),
@@ -229,6 +266,14 @@ public record Embed(
         }
     }
 
+    /**
+     * Image Graphic Element.
+     *
+     * @param url the url of this image
+     * @param proxyURL the proxy url
+     * @param height the optional height
+     * @param width the optional width
+     */
     public record Image(
             @NotNull String url,
             @Nullable String proxyURL,
@@ -276,6 +321,12 @@ public record Embed(
                 return this;
             }
 
+            /**
+             * Builds a new Image object.
+             *
+             * @return a new Image
+             * @throws NullPointerException if no url was assigned
+             */
             public Image build() {
                 return new Image(
                         requireNonNull(this.url, "url"),
@@ -287,6 +338,12 @@ public record Embed(
         }
     }
 
+    /**
+     * Provider Element.
+     *
+     * @param name provider's name
+     * @param url provider's url
+     */
     public record Provider(
             @Nullable String name,
             @Nullable String url
@@ -317,19 +374,24 @@ public record Embed(
                 return this;
             }
 
+            /**
+             * Builds a new Provider object.
+             *
+             * @return a new provider object
+             */
             public Provider build() {
                 return new Provider(this.name, this.url);
             }
         }
     }
 
-    //todo
     /**
+     * The author of the Embed.
      *
-     * @param name
-     * @param url
-     * @param iconURL
-     * @param proxyIconURL
+     * @param name the author name
+     * @param url the author url
+     * @param iconURL the author icon url
+     * @param proxyIconURL The proxy from which the icon url will be obtained
      */
     public record Author(
             @NotNull String name,
@@ -378,6 +440,11 @@ public record Embed(
                 return this;
             }
 
+            /**
+             * Builds a new Author object.
+             *
+             * @return a new author object
+             */
             public Author build() {
                 return new Author(
                         requireNonNull(this.name, "name"),
@@ -389,6 +456,13 @@ public record Embed(
         }
     }
 
+    /**
+     * An Embed Field
+     *
+     * @param inline the inline state
+     * @param name the field name
+     * @param value the value
+     */
     public record Field(
             @Nullable Boolean inline,
             @NotNull String name,
@@ -429,6 +503,11 @@ public record Embed(
                 return this;
             }
 
+            /**
+             * Builds a new Field.
+             *
+             * @return a new field
+             */
             public Field build() {
                 return new Field(
                         this.inline,
@@ -439,6 +518,9 @@ public record Embed(
         }
     }
 
+    /**
+     * Embed builder
+     */
     public static final class Builder {
         private String title;
         private String type;
@@ -578,6 +660,11 @@ public record Embed(
             return this;
         }
 
+        /**
+         * Builds a new Embed.
+         *
+         * @return a new embed
+         */
         @Contract("-> new")
         public @NotNull Embed build() {
             return new Embed(
