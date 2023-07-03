@@ -111,7 +111,6 @@ public record WebHook(
             for (final Embed embed : embeds) {
                 this.embed(embed);
             }
-            this.embeds = embeds;
             return this;
         }
 

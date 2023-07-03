@@ -1,9 +1,6 @@
 package io.github._4drian3d.jdwebhooks.serializer;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import io.github._4drian3d.jdwebhooks.Embed;
 
 import java.lang.reflect.Type;
@@ -84,13 +81,16 @@ public final class EmbedSerializer implements JsonSerializer<Embed>, CommonSeria
     private void serializeFields(final JsonObject object, final Embed.Field[] fields) {
         if (fields == null) return;
 
-        final JsonObject providerObject = new JsonObject();
+        final JsonArray fieldArray = new JsonArray();
+
         for (final Embed.Field field : fields) {
-            this.addNonNull(providerObject, "inline", field.inline());
-            object.addProperty("name", field.name());
-            object.addProperty("value", field.value());
+            final JsonObject fieldObject = new JsonObject();
+            this.addNonNull(fieldObject, "inline", field.inline());
+            fieldObject.addProperty("name", field.name());
+            fieldObject.addProperty("value", field.value());
+            fieldArray.add(fieldObject);
         }
 
-        object.add("provider", providerObject);
+        object.add("fields", fieldArray);
     }
 }
