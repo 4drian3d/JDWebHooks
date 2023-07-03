@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.4drian3d:jdwebhooks:1.0.0")
+    implementation("io.github.4drian3d:jdwebhooks:1.0.1")
 }
 ```
 
