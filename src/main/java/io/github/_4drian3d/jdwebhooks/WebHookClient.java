@@ -43,6 +43,7 @@ public final class WebHookClient {
      * Get a builder for the creation of a new WebHookClient.
      * <br>It is recommended to use a builder instead of the static factory
      * to be able to configure a user agent corresponding to your application.
+     *
      * @return a new WebHookClient Builder
      */
     public static Builder builder() {
@@ -109,6 +110,7 @@ public final class WebHookClient {
 
         /**
          * Sets the client URI
+         *
          * @param uri the client uri
          * @return this builder
          * @throws IllegalArgumentException if the provided URL is invalid
@@ -125,6 +127,7 @@ public final class WebHookClient {
 
         /**
          * Set credentials for sending webhooks
+         *
          * @param id the webhook id
          * @param token the webhook token
          * @return this builder
@@ -139,6 +142,7 @@ public final class WebHookClient {
 
         /**
          * Sets the user agent to use
+         *
          * @param agent the user agent
          * @return this builder
          */
@@ -150,6 +154,7 @@ public final class WebHookClient {
 
         /**
          * Creates a new WebHookClient based on the configuration of this builder
+         *
          * @return a new WebHookClient
          * @throws NullPointerException in case no credentials/uri or user agent have been configured
          */
