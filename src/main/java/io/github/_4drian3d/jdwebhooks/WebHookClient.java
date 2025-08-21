@@ -2,9 +2,7 @@ package io.github._4drian3d.jdwebhooks;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.github._4drian3d.jdwebhooks.serializer.DateSerializer;
-import io.github._4drian3d.jdwebhooks.serializer.EmbedSerializer;
-import io.github._4drian3d.jdwebhooks.serializer.WebHookSerializer;
+import io.github._4drian3d.jdwebhooks.serializer.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
@@ -32,6 +30,7 @@ public final class WebHookClient {
             .registerTypeAdapter(OffsetDateTime.class, new DateSerializer())
             .registerTypeAdapter(Embed.class, new EmbedSerializer())
             .registerTypeAdapter(WebHook.class, new WebHookSerializer())
+            .registerTypeAdapter(AllowedMentions.class, new AllowedMentionsSerializer())
             .create();
 
     private WebHookClient(final Builder builder) {
