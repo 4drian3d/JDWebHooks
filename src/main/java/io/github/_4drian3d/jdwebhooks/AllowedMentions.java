@@ -31,6 +31,14 @@ public record AllowedMentions(
         if (users.size() > MAX_ID_ARRAY) {
             throw new IllegalArgumentException("users cannot contain more than " + MAX_ID_ARRAY + " entries");
         }
+
+        // check for mutual exclusivity: parse is mutually exclusive with roles and users
+        if(parse.contains("users") && !users.isEmpty()) {
+            throw new IllegalArgumentException("Cannot specify 'users' in parse and also provide user ids");
+        }
+        if(parse.contains("roles") && !roles.isEmpty()) {
+            throw new IllegalArgumentException("Cannot specify 'roles' in parse and also provide role ids");
+        }
     }
 
     private static List<String> validateAndNormalizeParse(Collection<String> input) {

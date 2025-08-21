@@ -11,7 +11,8 @@ public final class AllowedMentionsSerializer implements JsonSerializer<AllowedMe
         final JsonObject object = new JsonObject();
 
         final var parse = allowedMentions.parse();
-        if(parse != null && !parse.isEmpty()) {
+        // we don't check for empty, because an empty parse list has a different meaning than no parse at all
+        if(parse != null) {
             object.add("parse", context.serialize(parse));
         }
 
