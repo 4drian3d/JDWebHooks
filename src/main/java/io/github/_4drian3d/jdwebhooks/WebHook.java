@@ -26,7 +26,7 @@ public record WebHook(
         @Nullable String avatarURL,
         @Nullable Boolean tts,
         @Nullable List<Embed> embeds,
-        @Nullable Boolean allowedMentions,
+        @Nullable AllowedMentions allowedMentions,
         @Nullable String threadName
 ) {
     public WebHook {
@@ -51,7 +51,7 @@ public record WebHook(
         private String avatarURL;
         private Boolean tts;
         private List<Embed> embeds;
-        private Boolean allowedMentions;
+        private AllowedMentions allowedMentions;
         private String threadName;
 
         private Builder() {
@@ -122,7 +122,7 @@ public record WebHook(
             return this;
         }
 
-        public Builder allowedMentions(final @Nullable Boolean allowedMentions) {
+        public Builder allowedMentions(final @Nullable AllowedMentions allowedMentions) {
             this.allowedMentions = allowedMentions;
             return this;
         }

@@ -20,8 +20,12 @@ public final class WebHookSerializer implements JsonSerializer<WebHook>, CommonS
         this.addNonNull(object, "username", src.username());
         this.addNonNull(object, "avatar_url", src.avatarURL());
         this.addNonNull(object, "tts", src.tts());
-        this.addNonNull(object, "allowed_mentions", src.allowedMentions());
         this.addNonNull(object, "thread_name", src.threadName());
+
+        final var allowedMentions = src.allowedMentions();
+        if (allowedMentions != null) {
+            object.add("allowed_mentions", context.serialize(allowedMentions));
+        }
 
         final var embeds = src.embeds();
         if (embeds != null) {
