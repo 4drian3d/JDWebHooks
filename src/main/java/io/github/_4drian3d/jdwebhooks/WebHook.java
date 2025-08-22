@@ -170,7 +170,7 @@ public record WebHook(
 
         public Builder component(final @NotNull Component component) {
             requireNonNull(component);
-            if (this.embeds == null) {
+            if (this.components == null) {
                 this.components = new ArrayList<>();
             }
             this.components.add(component);

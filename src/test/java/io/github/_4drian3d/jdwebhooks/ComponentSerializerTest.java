@@ -115,4 +115,14 @@ public class ComponentSerializerTest {
         JsonAssertions.assertThatJson(json).inPath("$.file.url").isString().isEqualTo("attachment://" + fileName);
         JsonAssertions.assertThatJson(json).inPath("$.spoiler").isBoolean().isEqualTo(true);
     }
+
+    @Test
+    void testSeparatorSerialization() {
+        final var component = Component.separator().spacing(SeparatorComponent.Spacing.LARGE).build();
+        final String json = gson.toJson(component);
+
+        JsonAssertions.assertThatJson(json).inPath("$.id").isAbsent();
+        JsonAssertions.assertThatJson(json).inPath("$.type").isIntegralNumber().isEqualTo(ComponentType.SEPARATOR.getType());
+        JsonAssertions.assertThatJson(json).inPath("$.spacing").isIntegralNumber().isEqualTo(SeparatorComponent.Spacing.LARGE.getValue());
+    }
 }

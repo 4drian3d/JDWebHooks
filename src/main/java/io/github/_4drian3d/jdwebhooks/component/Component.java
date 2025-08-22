@@ -45,6 +45,10 @@ public class Component {
         return new FileComponent.Builder(file);
     }
 
+    public static SeparatorComponent.Builder separator() {
+        return new SeparatorComponent.Builder();
+    }
+
     abstract static class Builder<T extends Builder<T>> {
         protected int id;
 

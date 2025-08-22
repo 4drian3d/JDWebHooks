@@ -152,4 +152,18 @@ class WebHookClientTest {
         final var response = client.sendWebHook(webHook).get();
         assertEquals(200, response.code());
     }
+
+    @Test
+    void testSeparatorComponent() throws ExecutionException, InterruptedException {
+        final var text1 = Component.textDisplay("Above the separator").build();
+        final var text2 = Component.textDisplay("Below the separator").build();
+        final var separator = Component.separator().spacing(SeparatorComponent.Spacing.LARGE).build();
+
+        final WebHook webHook = WebHook.builder()
+                .components(text1, separator, text2)
+                .build();
+
+        final var response = client.sendWebHook(webHook).get();
+        assertEquals(204, response.code());
+    }
 }

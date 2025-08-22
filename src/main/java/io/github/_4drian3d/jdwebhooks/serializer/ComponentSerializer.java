@@ -58,6 +58,19 @@ public class ComponentSerializer implements JsonSerializer<Component> {
             }
         }
 
+        if (src instanceof SeparatorComponent separator) {
+            final var divider = separator.getDivider();
+            // true is the default value so we can ignore that
+            if (divider == Boolean.FALSE) {
+                object.addProperty("divider", false);
+            }
+
+            final var spacing = separator.getSpacing();
+            if (spacing != null) {
+                object.addProperty("spacing", spacing.getValue());
+            }
+        }
+
         return object;
     }
 }
