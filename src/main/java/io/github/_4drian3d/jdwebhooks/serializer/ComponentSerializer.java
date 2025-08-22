@@ -43,6 +43,10 @@ public class ComponentSerializer implements JsonSerializer<Component> {
             }
         }
 
+        if (src instanceof MediaGalleryComponent mediaGallery) {
+            object.add("items", context.serialize(mediaGallery.getItems()));
+        }
+
         return object;
     }
 }

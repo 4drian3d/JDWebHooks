@@ -73,9 +73,28 @@ class WebHookClientTest {
         }
 
         final var avatarUrl = "https://cdn.discordapp.com/avatars/987412444039225354/3cb070eecd10fc3a0d6298d5e8d984b8.png"; //https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-        final var accessory = Component.thumbnail().media(avatarUrl).spoiler(true).description("Hi :)").build();
+        final var accessory = Component.thumbnail(avatarUrl).spoiler(true).description("Hi :)").build();
 
         final var component = Component.section().components(textComponents).accessory(accessory).build();
+        final WebHook webHook = WebHook.builder()
+                .component(component)
+                .build();
+
+        final var response = client.sendWebHook(webHook).get();
+        assertEquals(204, response.statusCode());
+    }
+
+    @Test
+    void testMediaGalleryComponent() throws ExecutionException, InterruptedException {
+        // generate 10 random image urls
+        final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
+        for (int i = 1; i <= 10; i++) {
+            final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
+            final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            mediaItems.add(mediaItem);
+        }
+
+        final var component = Component.mediaGallery().items(mediaItems).build();
         final WebHook webHook = WebHook.builder()
                 .component(component)
                 .build();

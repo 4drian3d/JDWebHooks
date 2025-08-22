@@ -33,8 +33,12 @@ public class Component {
         return new TextDisplayComponent.Builder();
     }
 
-    public static ThumbnailComponent.Builder thumbnail() {
-        return new ThumbnailComponent.Builder();
+    public static ThumbnailComponent.Builder thumbnail(@NotNull final String media) {
+        return new ThumbnailComponent.Builder(media);
+    }
+
+    public static MediaGalleryComponent.Builder mediaGallery() {
+        return new MediaGalleryComponent.Builder();
     }
 
     abstract static class Builder<T extends Builder<T>> {

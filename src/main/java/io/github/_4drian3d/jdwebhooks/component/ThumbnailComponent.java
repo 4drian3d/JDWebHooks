@@ -2,6 +2,7 @@ package io.github._4drian3d.jdwebhooks.component;
 
 import org.jetbrains.annotations.*;
 
+@SuppressWarnings("unused")
 public final class ThumbnailComponent extends Component implements AccessoryComponent {
     @NotNull
     private final String media;
@@ -38,9 +39,9 @@ public final class ThumbnailComponent extends Component implements AccessoryComp
         private String description;
         private Boolean spoiler;
 
-        Builder() {
+        Builder(@NotNull final String media) {
             super();
-            this.media = "";
+            this.media = media;
             this.description = null;
             this.spoiler = null;
         }
