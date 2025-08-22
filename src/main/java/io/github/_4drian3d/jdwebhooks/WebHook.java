@@ -1,12 +1,10 @@
 package io.github._4drian3d.jdwebhooks;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.*;
 
 /**
  * Object containing all available items to display in a Discord WebHook.
@@ -27,7 +25,9 @@ public record WebHook(
         @Nullable Boolean tts,
         @Nullable List<Embed> embeds,
         @Nullable AllowedMentions allowedMentions,
-        @Nullable String threadName
+        @Nullable String threadName,
+        @Nullable String threadId,
+        @Nullable Boolean waitForMessage
 ) {
     public WebHook {
         requireNonNull(content, "content");
@@ -53,6 +53,8 @@ public record WebHook(
         private List<Embed> embeds;
         private AllowedMentions allowedMentions;
         private String threadName;
+        private String threadId;
+        private Boolean waitForMessage;
 
         private Builder() {
         }
@@ -132,6 +134,30 @@ public record WebHook(
             return this;
         }
 
+        /**
+         * Sets the ID of an existing thread to send the message in.
+         *
+         * @param threadId The "thread_id" query parameter
+         * @return this builder
+         * @see <a href=https://discord.com/developers/docs/resources/webhook#execute-webhook-query-string-params>Execute Webhook Query String Params</a>
+         */
+        public Builder threadId(final @Nullable String threadId) {
+            this.threadId = threadId;
+            return this;
+        }
+
+        /**
+         * Sets whether the response should wait for the message to be created.
+         *
+         * @param waitForMessage the "wait" query parameter
+         * @return this builder
+         * @see <a href=https://discord.com/developers/docs/resources/webhook#execute-webhook-query-string-params>Execute Webhook Query String Params</a>
+         */
+        public Builder waitForMessage(final @Nullable Boolean waitForMessage) {
+            this.waitForMessage = waitForMessage;
+            return this;
+        }
+
         public WebHook build() {
             return new WebHook(
                     this.content,
@@ -140,7 +166,9 @@ public record WebHook(
                     this.tts,
                     this.embeds,
                     this.allowedMentions,
-                    this.threadName
+                    this.threadName,
+                    this.threadId,
+                    this.waitForMessage
             );
         }
     }

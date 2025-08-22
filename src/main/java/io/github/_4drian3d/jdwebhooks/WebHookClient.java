@@ -1,20 +1,16 @@
 package io.github._4drian3d.jdwebhooks;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import io.github._4drian3d.jdwebhooks.serializer.*;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.time.OffsetDateTime;
-import java.util.concurrent.CompletableFuture;
+import java.net.*;
+import java.net.http.*;
+import java.nio.charset.*;
+import java.time.*;
+import java.util.concurrent.*;
 
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.*;
 
 /**
  * An object capable of sending requests to publish WebHooks in a given Discord channel.
@@ -83,18 +79,66 @@ public final class WebHookClient {
         requireNonNull(webHook, "webhook");
         final String json = gson.toJson(webHook);
 
-        return sendRequest(json);
+        var webHookURL = this.webhookURL;
+
+        // check for waitForMessage
+        if (webHook.waitForMessage() != null && webHook.waitForMessage()) {
+            webHookURL = withQueryParam(
+                    this.webhookURL,
+                    "wait",
+                    "true"
+            );
+        }
+
+        // check for threadId
+        if (webHook.threadId() != null && !webHook.threadId().isEmpty()) {
+            webHookURL = withQueryParam(
+                    this.webhookURL,
+                    "thread_id",
+                    webHook.threadId()
+            );
+        }
+
+        return sendRequest(json, webHookURL);
     }
 
-    private CompletableFuture<HttpResponse<String>> sendRequest(final String json) {
+    private CompletableFuture<HttpResponse<String>> sendRequest(final String json, final URI webhookURL) {
         final HttpRequest request = HttpRequest.newBuilder()
-                .uri(this.webhookURL)
+                .uri(webhookURL)
                 .header("User-Agent", this.userAgent)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
                 .build();
 
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    /**
+     * Utility function that adds a query parameter to the given base URI.
+     *
+     * @param base  the base URI to which the query parameter should be added
+     * @param key   the query parameter key
+     * @param value the query parameter value
+     * @return a new URI with the query parameter added
+     */
+    private URI withQueryParam(URI base, String key, String value) {
+        try {
+            String existingQuery = base.getQuery();
+            String newQuery = (existingQuery == null ? "" : existingQuery + "&")
+                    + URLEncoder.encode(key, StandardCharsets.UTF_8)
+                    + "="
+                    + URLEncoder.encode(value, StandardCharsets.UTF_8);
+
+            return new URI(
+                    base.getScheme(),
+                    base.getAuthority(),
+                    base.getPath(),
+                    newQuery,
+                    base.getFragment()
+            );
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Failed to build URI with query parameter", e);
+        }
     }
 
     /**
