@@ -4,6 +4,7 @@ A library to send Discord WebHooks easily
 
 ## Requirements
 - Java 17
+- OkHttp 5.1.0 to be included in the classpath (it's not shaded in the jar)
 
 ## Usage
 
