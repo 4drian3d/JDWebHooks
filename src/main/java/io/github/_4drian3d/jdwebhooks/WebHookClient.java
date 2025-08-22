@@ -1,6 +1,7 @@
 package io.github._4drian3d.jdwebhooks;
 
 import com.google.gson.*;
+import io.github._4drian3d.jdwebhooks.component.*;
 import io.github._4drian3d.jdwebhooks.serializer.*;
 import org.jetbrains.annotations.*;
 
@@ -27,6 +28,7 @@ public final class WebHookClient {
             .registerTypeAdapter(Embed.class, new EmbedSerializer())
             .registerTypeAdapter(WebHook.class, new WebHookSerializer())
             .registerTypeAdapter(AllowedMentions.class, new AllowedMentionsSerializer())
+            .registerTypeAdapter(TextDisplayComponent.class, new ComponentSerializer())
             .create();
 
     private WebHookClient(final Builder builder) {
@@ -96,6 +98,15 @@ public final class WebHookClient {
                     this.webhookURL,
                     "thread_id",
                     webHook.threadId()
+            );
+        }
+
+        // if we have components add with_components
+        if (webHook.components() != null && !webHook.components().isEmpty()) {
+            webHookURL = withQueryParam(
+                    webHookURL,
+                    "with_components",
+                    "true"
             );
         }
 

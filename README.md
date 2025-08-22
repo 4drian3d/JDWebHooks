@@ -46,4 +46,12 @@ public class Main {
 
 ```
 
+## Testing
+
+There are unit tests included in the project using JUnit 5 and JsonUnit.
+
+To run the tests, you must first set the DISCORD_WEBHOOK_URL environment variable with a valid Discord WebHook URL.
+
+Then, you can run the `test` task using your IDE or build tool.
+
 ![](https://github.com/4drian3d/JDWebHooks/assets/68704415/e0950431-24c6-42b7-9f3b-302a7e7be8ef)

@@ -1,12 +1,9 @@
 package io.github._4drian3d.jdwebhooks.serializer;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import io.github._4drian3d.jdwebhooks.WebHook;
+import com.google.gson.*;
+import io.github._4drian3d.jdwebhooks.*;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 
 public final class WebHookSerializer implements JsonSerializer<WebHook>, CommonSerializer {
     @Override
@@ -28,8 +25,17 @@ public final class WebHookSerializer implements JsonSerializer<WebHook>, CommonS
         }
 
         final var embeds = src.embeds();
-        if (embeds != null) {
+        if (embeds != null && !embeds.isEmpty()) {
             object.add("embeds", context.serialize(embeds));
+        }
+
+        final var components = src.components();
+        if (components != null && !components.isEmpty()) {
+            object.add("components", context.serialize(components));
+
+            // also apply a 1 << 15 bitfield to "flags" to indicate the message contains components
+            final int existingFlags = object.get("flags") != null ? object.get("flags").getAsInt() : 0;
+            object.addProperty("flags", existingFlags | (1 << 15));
         }
 
         return object;

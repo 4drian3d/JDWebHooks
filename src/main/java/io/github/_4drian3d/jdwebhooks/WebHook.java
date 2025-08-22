@@ -1,5 +1,6 @@
 package io.github._4drian3d.jdwebhooks;
 
+import io.github._4drian3d.jdwebhooks.component.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -19,7 +20,7 @@ import static java.util.Objects.*;
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public record WebHook(
-        @NotNull String content,
+        @Nullable String content,
         @Nullable String username,
         @Nullable String avatarURL,
         @Nullable Boolean tts,
@@ -27,10 +28,18 @@ public record WebHook(
         @Nullable AllowedMentions allowedMentions,
         @Nullable String threadName,
         @Nullable String threadId,
-        @Nullable Boolean waitForMessage
+        @Nullable Boolean waitForMessage,
+        @Nullable List<Component> components
 ) {
     public WebHook {
-        requireNonNull(content, "content");
+        // either content, embeds, or components must be provided
+        if (content == null && (embeds == null || embeds.isEmpty()) && (components == null || components.isEmpty())) {
+            throw new IllegalArgumentException("Either content, embeds, or components must be provided");
+        }
+        // if components exist, content and embeds must be null
+        if (components != null && !components.isEmpty() && (content != null || embeds != null)) {
+            throw new IllegalArgumentException("If components are provided, content and embeds must be null");
+        }
     }
 
     /**
@@ -46,7 +55,7 @@ public record WebHook(
      * WebHook Builder
      */
     public static final class Builder {
-        private String content = "";
+        private String content;
         private String username;
         private String avatarURL;
         private Boolean tts;
@@ -55,6 +64,7 @@ public record WebHook(
         private String threadName;
         private String threadId;
         private Boolean waitForMessage;
+        private List<Component> components;
 
         private Builder() {
         }
@@ -158,6 +168,31 @@ public record WebHook(
             return this;
         }
 
+        public Builder component(final @NotNull Component component) {
+            requireNonNull(component);
+            if (this.embeds == null) {
+                this.components = new ArrayList<>();
+            }
+            this.components.add(component);
+            return this;
+        }
+
+        public Builder components(final @NotNull List<@NotNull Component> components) {
+            requireNonNull(components);
+            for (final Component embed : components) {
+                this.component(embed);
+            }
+            return this;
+        }
+
+        public Builder components(@NotNull Component @NotNull ... components) {
+            requireNonNull(components);
+            for (final Component embed : components) {
+                this.component(embed);
+            }
+            return this;
+        }
+
         public WebHook build() {
             return new WebHook(
                     this.content,
@@ -168,7 +203,8 @@ public record WebHook(
                     this.allowedMentions,
                     this.threadName,
                     this.threadId,
-                    this.waitForMessage
+                    this.waitForMessage,
+                    this.components
             );
         }
     }

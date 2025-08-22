@@ -16,6 +16,15 @@ repositories {
 dependencies {
     compileOnlyApi(libs.annotations)
     implementation(libs.gson)
+
+    // JUnit
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.11.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
+
+    // JsonUnit
+    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:4.1.1")
 }
 
 tasks {
@@ -30,6 +39,10 @@ tasks {
                 "https://javadoc.io/doc/com.google.code.gson/gson",
                 "https://javadoc.io/doc/org.jetbrains/annotations"
         )
+    }
+    test {
+        useJUnitPlatform()
+        environment("DISCORD_WEBHOOK_URL", System.getenv("DISCORD_WEBHOOK_URL"))
     }
 }
 
