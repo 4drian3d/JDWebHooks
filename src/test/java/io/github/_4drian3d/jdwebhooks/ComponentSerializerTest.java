@@ -13,7 +13,7 @@ public class ComponentSerializerTest {
     @Test
     void testTextDisplaySerialization() {
         final String content = "Hello, World!";
-        final Component component = Component.textDisplay().setContent(content).build();
+        final Component component = Component.textDisplay(content).build();
         final String json = gson.toJson(component);
 
         // id should be absent since it was not provided
@@ -26,7 +26,7 @@ public class ComponentSerializerTest {
     void testTextDisplaySerializationWithId() {
         final String content = "Hello, World!";
         final int id = 42;
-        final Component component = Component.textDisplay().setContent(content).setId(id).build();
+        final Component component = Component.textDisplay(content).setId(id).build();
         final String json = gson.toJson(component);
 
         JsonAssertions.assertThatJson(json).inPath("$.id").isIntegralNumber().isEqualTo(id);
@@ -39,7 +39,7 @@ public class ComponentSerializerTest {
         // generate 3 text display components using a for loop
         final var textComponents = new ArrayList<TextDisplayComponent>();
         for (int i = 1; i <= 3; i++) {
-            textComponents.add(Component.textDisplay().setContent("Text Component " + i).build());
+            textComponents.add(Component.textDisplay("Text Component " + i).build());
         }
 
         final var avatarUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
@@ -102,5 +102,17 @@ public class ComponentSerializerTest {
                 JsonAssertions.assertThatJson(json).inPath("$.items[" + i + "].spoiler").isAbsent();
             }
         }
+    }
+
+    @Test
+    void testFileSerialization() {
+        final var fileName = "file.png";
+        final var component = Component.file(fileName).spoiler(true).build();
+        final String json = gson.toJson(component);
+
+        JsonAssertions.assertThatJson(json).inPath("$.id").isAbsent();
+        JsonAssertions.assertThatJson(json).inPath("$.type").isIntegralNumber().isEqualTo(ComponentType.FILE.getType());
+        JsonAssertions.assertThatJson(json).inPath("$.file.url").isString().isEqualTo("attachment://" + fileName);
+        JsonAssertions.assertThatJson(json).inPath("$.spoiler").isBoolean().isEqualTo(true);
     }
 }

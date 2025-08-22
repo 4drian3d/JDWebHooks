@@ -19,6 +19,7 @@ class GsonProvider {
                 .registerTypeAdapter(TextDisplayComponent.class, componentSerializer)
                 .registerTypeAdapter(ThumbnailComponent.class, componentSerializer)
                 .registerTypeAdapter(MediaGalleryComponent.class, componentSerializer)
+                .registerTypeAdapter(FileComponent.class, componentSerializer)
                 .registerTypeAdapter(MediaGalleryComponent.Item.class, new MediaGalleryItemSerializer())
                 .create();
     }

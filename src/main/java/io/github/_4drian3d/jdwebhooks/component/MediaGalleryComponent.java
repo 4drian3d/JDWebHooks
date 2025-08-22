@@ -9,7 +9,7 @@ public final class MediaGalleryComponent extends Component {
     @NotNull
     final List<@NotNull Item> items;
 
-    MediaGalleryComponent(int id, @NotNull final List<@NotNull Item> items) {
+    MediaGalleryComponent(final int id, @NotNull final List<@NotNull Item> items) {
         super(ComponentType.MEDIA_GALLERY, id);
 
         if (items.isEmpty() || items.size() > 10) {

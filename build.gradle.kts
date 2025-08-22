@@ -16,6 +16,7 @@ repositories {
 dependencies {
     compileOnlyApi(libs.annotations)
     implementation(libs.gson)
+    implementation(libs.okhttp)
 
     // JUnit
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
@@ -31,6 +32,7 @@ tasks {
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
+        options.compilerArgs.add("-Xlint:-processing")
     }
     javadoc {
         options.encoding = Charsets.UTF_8.name()

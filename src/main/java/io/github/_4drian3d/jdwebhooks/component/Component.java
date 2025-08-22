@@ -29,8 +29,8 @@ public class Component {
         return new SectionComponent.Builder();
     }
 
-    public static TextDisplayComponent.Builder textDisplay() {
-        return new TextDisplayComponent.Builder();
+    public static TextDisplayComponent.Builder textDisplay(@NotNull final String content) {
+        return new TextDisplayComponent.Builder(content);
     }
 
     public static ThumbnailComponent.Builder thumbnail(@NotNull final String media) {
@@ -39,6 +39,10 @@ public class Component {
 
     public static MediaGalleryComponent.Builder mediaGallery() {
         return new MediaGalleryComponent.Builder();
+    }
+
+    public static FileComponent.Builder file(@NotNull final String file) {
+        return new FileComponent.Builder(file);
     }
 
     abstract static class Builder<T extends Builder<T>> {

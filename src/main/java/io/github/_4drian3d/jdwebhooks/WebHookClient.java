@@ -1,11 +1,12 @@
 package io.github._4drian3d.jdwebhooks;
 
 import com.google.gson.*;
+import okhttp3.*;
 import org.jetbrains.annotations.*;
 
+import java.io.*;
 import java.net.*;
-import java.net.http.*;
-import java.nio.charset.*;
+import java.nio.file.*;
 import java.util.concurrent.*;
 
 import static java.util.Objects.*;
@@ -18,7 +19,7 @@ public final class WebHookClient {
     private static final String BASE_URL = "https://discord.com/api/webhooks/%s/%s";
     private static final String DEFAULT_AGENT = "github/4drian3d/JDWebhooks";
     private final URI webhookURL;
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final OkHttpClient httpClient = new OkHttpClient();
     private final String userAgent;
     private final Gson gson = GsonProvider.getGson();
 
@@ -68,79 +69,81 @@ public final class WebHookClient {
      * @param webHook the webhook to send
      * @return a CompletableFuture with the result of this request
      */
-    public CompletableFuture<HttpResponse<String>> sendWebHook(final @NotNull WebHook webHook) {
+    public CompletableFuture<Response> sendWebHook(final @NotNull WebHook webHook) {
         requireNonNull(webHook, "webhook");
-        final String json = gson.toJson(webHook);
 
-        var webHookURL = this.webhookURL;
+        final var urlBuilder = requireNonNull(HttpUrl.parse(this.webhookURL.toString())).newBuilder();
 
         // check for waitForMessage
         if (webHook.waitForMessage() != null && webHook.waitForMessage()) {
-            webHookURL = withQueryParam(
-                    this.webhookURL,
-                    "wait",
-                    "true"
-            );
+            urlBuilder.addQueryParameter("wait", "true");
         }
 
         // check for threadId
         if (webHook.threadId() != null && !webHook.threadId().isEmpty()) {
-            webHookURL = withQueryParam(
-                    this.webhookURL,
-                    "thread_id",
-                    webHook.threadId()
-            );
+            urlBuilder.addQueryParameter("thread_id", webHook.threadId());
         }
 
         // if we have components add with_components
         if (webHook.components() != null && !webHook.components().isEmpty()) {
-            webHookURL = withQueryParam(
-                    webHookURL,
-                    "with_components",
-                    "true"
-            );
+            urlBuilder.addQueryParameter("with_components", "true");
         }
 
-        return sendRequest(json, webHookURL);
-    }
-
-    private CompletableFuture<HttpResponse<String>> sendRequest(final String json, final URI webhookURL) {
-        final HttpRequest request = HttpRequest.newBuilder()
-                .uri(webhookURL)
-                .header("User-Agent", this.userAgent)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
+        // build the request body
+        final RequestBody body;
+        try {
+            body = getBody(webHook);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        final var request = new Request.Builder()
+                .url(urlBuilder.build())
+                .post(body)
+                .addHeader("User-Agent", this.userAgent)
                 .build();
 
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        final var future = new CompletableFuture<Response>();
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(e);
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                future.complete(response);
+            }
+        });
+
+        return future;
     }
 
-    /**
-     * Utility function that adds a query parameter to the given base URI.
-     *
-     * @param base  the base URI to which the query parameter should be added
-     * @param key   the query parameter key
-     * @param value the query parameter value
-     * @return a new URI with the query parameter added
-     */
-    private URI withQueryParam(URI base, String key, String value) {
-        try {
-            String existingQuery = base.getQuery();
-            String newQuery = (existingQuery == null ? "" : existingQuery + "&")
-                    + URLEncoder.encode(key, StandardCharsets.UTF_8)
-                    + "="
-                    + URLEncoder.encode(value, StandardCharsets.UTF_8);
+    private RequestBody getBody(final @NotNull WebHook webHook) throws IOException {
+        if (webHook.attachments() == null || webHook.attachments().isEmpty()) {
+            final String json = gson.toJson(webHook);
+            return RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+        } else {
+            final var multipartBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
-            return new URI(
-                    base.getScheme(),
-                    base.getAuthority(),
-                    base.getPath(),
-                    newQuery,
-                    base.getFragment()
-            );
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Failed to build URI with query parameter", e);
+            // add payload_json part
+            final String json = gson.toJson(webHook);
+            final var jsonBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+            multipartBuilder.addFormDataPart("payload_json", null, jsonBody);
+
+            // add files parts
+            for (int i = 0; i < webHook.attachments().size(); i++) {
+                final FileAttachment attachment = webHook.attachments().get(i);
+
+                final var file = attachment.file();
+                final var fileType = Files.probeContentType(file.toPath());
+
+                final RequestBody fileBody = RequestBody.create(attachment.file(), fileType != null ? MediaType.get(fileType) : MediaType.get("application/octet-stream"));
+                multipartBuilder.addFormDataPart("files[" + i + "]", attachment.getFilename(), fileBody);
+            }
+
+            return multipartBuilder.build();
         }
+
     }
 
     /**

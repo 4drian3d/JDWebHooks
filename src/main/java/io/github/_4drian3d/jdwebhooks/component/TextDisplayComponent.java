@@ -26,9 +26,9 @@ public final class TextDisplayComponent extends Component {
         @NotNull
         private String content;
 
-        Builder() {
+        Builder(@NotNull final String content) {
             super();
-            this.content = "";
+            this.content = content;
         }
 
         /**
@@ -37,7 +37,7 @@ public final class TextDisplayComponent extends Component {
          * @param content the text content
          * @return this builder
          */
-        public Builder setContent(@NotNull final String content) {
+        public Builder content(@NotNull final String content) {
             this.content = content;
             return this;
         }

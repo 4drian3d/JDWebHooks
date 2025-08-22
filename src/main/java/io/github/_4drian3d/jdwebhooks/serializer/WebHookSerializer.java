@@ -2,8 +2,10 @@ package io.github._4drian3d.jdwebhooks.serializer;
 
 import com.google.gson.*;
 import io.github._4drian3d.jdwebhooks.*;
+import org.jetbrains.annotations.*;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 public final class WebHookSerializer implements JsonSerializer<WebHook>, CommonSerializer {
     @Override
@@ -38,6 +40,27 @@ public final class WebHookSerializer implements JsonSerializer<WebHook>, CommonS
             object.addProperty("flags", existingFlags | (1 << 15));
         }
 
+        final var attachments = src.attachments();
+        if (attachments != null && !attachments.isEmpty()) {
+            var attachmentArray = getAttachments(attachments);
+            object.add("attachments", attachmentArray);
+        }
+
         return object;
+    }
+
+    private @NotNull JsonArray getAttachments(List<FileAttachment> attachments) {
+        var attachmentArray = new JsonArray();
+        for (var i = 0; i < attachments.size(); i++) {
+            var attachment = attachments.get(i);
+
+            var attachmentObject = new JsonObject();
+            attachmentObject.addProperty("id", String.valueOf(i));
+            attachmentObject.addProperty("filename", attachment.getFilename());
+            this.addNonNull(attachmentObject, "description", attachment.description());
+
+            attachmentArray.add(attachmentObject);
+        }
+        return attachmentArray;
     }
 }

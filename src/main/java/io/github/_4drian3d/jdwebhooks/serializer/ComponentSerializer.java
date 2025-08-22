@@ -47,6 +47,17 @@ public class ComponentSerializer implements JsonSerializer<Component> {
             object.add("items", context.serialize(mediaGallery.getItems()));
         }
 
+        if (src instanceof FileComponent file) {
+            final var fileObject = new JsonObject();
+            fileObject.addProperty("url", file.getFile());
+            object.add("file", fileObject);
+
+            final var spoiler = file.getSpoiler();
+            if (spoiler == Boolean.TRUE) {
+                object.addProperty("spoiler", true);
+            }
+        }
+
         return object;
     }
 }

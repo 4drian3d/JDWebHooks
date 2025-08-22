@@ -9,7 +9,7 @@ public final class ThumbnailComponent extends Component implements AccessoryComp
     private final String description;
     private final Boolean spoiler;
 
-    ThumbnailComponent(int id, @NotNull final String media, final String description, final Boolean spoiler) {
+    ThumbnailComponent(final int id, @NotNull final String media, final String description, final Boolean spoiler) {
         super(ComponentType.THUMBNAIL, id);
 
         if (description != null && description.length() > 1024) {

@@ -5,6 +5,7 @@ import io.github._4drian3d.jdwebhooks.component.*;
 import net.javacrumbs.jsonunit.assertj.*;
 import org.junit.jupiter.api.*;
 
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -30,11 +31,11 @@ class WebHookClientTest {
                 .build();
 
         final var response = client.sendWebHook(webHook).get();
-        assertEquals(204, response.statusCode());
+        assertEquals(204, response.code());
     }
 
     @Test
-    void testBasicMessage() throws ExecutionException, InterruptedException {
+    void testBasicMessage() throws ExecutionException, InterruptedException, IOException {
         final String username = "testing123";
         final String content = "testBasicMessage";
 
@@ -45,9 +46,9 @@ class WebHookClientTest {
                 .build();
 
         final var response = client.sendWebHook(webHook).get();
-        assertEquals(200, response.statusCode());
+        assertEquals(200, response.code());
 
-        final var jsonBody = JsonParser.parseString(response.body());
+        final var jsonBody = JsonParser.parseString(response.body().string());
         assertTrue(jsonBody.isJsonObject());
         JsonAssertions.assertThatJson(jsonBody).inPath("$.content").isEqualTo(content);
         JsonAssertions.assertThatJson(jsonBody).inPath("$.author.username").isEqualTo(username);
@@ -55,21 +56,21 @@ class WebHookClientTest {
 
     @Test
     void testTextDisplayComponent() throws ExecutionException, InterruptedException {
-        final var component = Component.textDisplay().setContent("Text Display Component").build();
+        final var component = Component.textDisplay("Text Display Component").build();
 
         final WebHook webHook = WebHook.builder()
                 .component(component)
                 .build();
 
         final var response = client.sendWebHook(webHook).get();
-        assertEquals(204, response.statusCode());
+        assertEquals(204, response.code());
     }
 
     @Test
     void testSectionComponent() throws ExecutionException, InterruptedException {
         final var textComponents = new ArrayList<TextDisplayComponent>();
         for (int i = 1; i <= 3; i++) {
-            textComponents.add(Component.textDisplay().setContent("Text Component " + i).build());
+            textComponents.add(Component.textDisplay("Text Component " + i).build());
         }
 
         final var avatarUrl = "https://cdn.discordapp.com/avatars/987412444039225354/3cb070eecd10fc3a0d6298d5e8d984b8.png"; //https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
@@ -81,7 +82,7 @@ class WebHookClientTest {
                 .build();
 
         final var response = client.sendWebHook(webHook).get();
-        assertEquals(204, response.statusCode());
+        assertEquals(204, response.code());
     }
 
     @Test
@@ -100,6 +101,55 @@ class WebHookClientTest {
                 .build();
 
         final var response = client.sendWebHook(webHook).get();
-        assertEquals(204, response.statusCode());
+        assertEquals(204, response.code());
+    }
+
+    @Test
+    void testFileAttachment() throws ExecutionException, InterruptedException {
+        File tempFile;
+        try {
+            tempFile = File.createTempFile("testfile", ".txt");
+            try (FileWriter writer = new FileWriter(tempFile)) {
+                writer.write("This is a test file.");
+            }
+        } catch (IOException e) {
+            fail("Failed to create temporary file: " + e.getMessage());
+            return;
+        }
+
+        final var attachment = FileAttachment.builder(tempFile).build();
+
+        final WebHook webHook = WebHook.builder()
+                .content("Secret message")
+                .attachment(attachment)
+                .build();
+
+        final var response = client.sendWebHook(webHook).get();
+        assertEquals(200, response.code());
+    }
+
+    @Test
+    void testFileComponent() throws ExecutionException, InterruptedException {
+        File tempFile;
+        try {
+            tempFile = File.createTempFile("testfile", ".txt");
+            try (FileWriter writer = new FileWriter(tempFile)) {
+                writer.write("This is a test file.");
+            }
+        } catch (IOException e) {
+            fail("Failed to create temporary file: " + e.getMessage());
+            return;
+        }
+
+        final var component = Component.file(tempFile.getName()).build();
+        final var attachment = FileAttachment.builder(tempFile).build();
+
+        final WebHook webHook = WebHook.builder()
+                .component(component)
+                .attachment(attachment)
+                .build();
+
+        final var response = client.sendWebHook(webHook).get();
+        assertEquals(200, response.code());
     }
 }

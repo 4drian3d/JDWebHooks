@@ -29,7 +29,8 @@ public record WebHook(
         @Nullable String threadName,
         @Nullable String threadId,
         @Nullable Boolean waitForMessage,
-        @Nullable List<Component> components
+        @Nullable List<Component> components,
+        @Nullable List<FileAttachment> attachments
 ) {
     public WebHook {
         // either content, embeds, or components must be provided
@@ -65,14 +66,13 @@ public record WebHook(
         private String threadId;
         private Boolean waitForMessage;
         private List<Component> components;
+        private List<FileAttachment> attachments;
 
         private Builder() {
         }
 
         /**
          * Sets the content string of this embed.
-         * <p>It can be an empty string and in case no content is provided,
-         * an empty string will be used</p>
          *
          * @param content the content string
          * @return this builder
@@ -193,6 +193,31 @@ public record WebHook(
             return this;
         }
 
+        public Builder attachment(final @NotNull FileAttachment attachment) {
+            requireNonNull(attachment);
+            if (this.attachments == null) {
+                this.attachments = new ArrayList<>();
+            }
+            this.attachments.add(attachment);
+            return this;
+        }
+
+        public Builder attachments(final @NotNull List<@NotNull FileAttachment> attachments) {
+            requireNonNull(attachments);
+            for (final FileAttachment attachment : attachments) {
+                this.attachment(attachment);
+            }
+            return this;
+        }
+
+        public Builder attachments(@NotNull FileAttachment @NotNull ... attachments) {
+            requireNonNull(attachments);
+            for (final FileAttachment attachment : attachments) {
+                this.attachment(attachment);
+            }
+            return this;
+        }
+
         public WebHook build() {
             return new WebHook(
                     this.content,
@@ -204,7 +229,8 @@ public record WebHook(
                     this.threadName,
                     this.threadId,
                     this.waitForMessage,
-                    this.components
+                    this.components,
+                    this.attachments
             );
         }
     }

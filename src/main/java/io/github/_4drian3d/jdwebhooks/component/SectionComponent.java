@@ -12,7 +12,7 @@ public final class SectionComponent extends Component {
     @NotNull
     private final AccessoryComponent accessory;
 
-    SectionComponent(int id, @NotNull final List<@NotNull TextDisplayComponent> components, @NotNull final AccessoryComponent accessory) {
+    SectionComponent(final int id, @NotNull final List<@NotNull TextDisplayComponent> components, @NotNull final AccessoryComponent accessory) {
         super(ComponentType.SECTION, id);
 
         if (components.isEmpty() || components.size() > 3) {
