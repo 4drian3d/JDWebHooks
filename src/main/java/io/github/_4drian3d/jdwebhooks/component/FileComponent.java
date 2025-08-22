@@ -2,7 +2,7 @@ package io.github._4drian3d.jdwebhooks.component;
 
 import org.jetbrains.annotations.*;
 
-public class FileComponent extends Component {
+public final class FileComponent extends Component implements ContainerableComponent {
     @NotNull
     private final String file;
     private final Boolean spoiler;

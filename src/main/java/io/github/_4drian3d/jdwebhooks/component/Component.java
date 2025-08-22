@@ -49,6 +49,10 @@ public class Component {
         return new SeparatorComponent.Builder();
     }
 
+    public static ContainerComponent.Builder container() {
+        return new ContainerComponent.Builder();
+    }
+
     abstract static class Builder<T extends Builder<T>> {
         protected int id;
 

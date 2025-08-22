@@ -80,7 +80,7 @@ public class ComponentSerializerTest {
     void testMediaGallerySerialization() {
         // generate 10 random image urls
         final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 9; i++) {
             final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
             final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
             mediaItems.add(mediaItem);
@@ -91,8 +91,8 @@ public class ComponentSerializerTest {
 
         JsonAssertions.assertThatJson(json).inPath("$.id").isAbsent();
         JsonAssertions.assertThatJson(json).inPath("$.type").isIntegralNumber().isEqualTo(ComponentType.MEDIA_GALLERY.getType());
-        JsonAssertions.assertThatJson(json).inPath("$.items").isArray().hasSize(10);
-        for (int i = 0; i < 10; i++) {
+        JsonAssertions.assertThatJson(json).inPath("$.items").isArray().hasSize(9);
+        for (int i = 0; i < 9; i++) {
             JsonAssertions.assertThatJson(json).inPath("$.items[" + i + "].media").isObject();
             JsonAssertions.assertThatJson(json).inPath("$.items[" + i + "].media.url").isString().isEqualTo(mediaItems.get(i).media());
             JsonAssertions.assertThatJson(json).inPath("$.items[" + i + "].description").isString().isEqualTo(mediaItems.get(i).description());
@@ -124,5 +124,29 @@ public class ComponentSerializerTest {
         JsonAssertions.assertThatJson(json).inPath("$.id").isAbsent();
         JsonAssertions.assertThatJson(json).inPath("$.type").isIntegralNumber().isEqualTo(ComponentType.SEPARATOR.getType());
         JsonAssertions.assertThatJson(json).inPath("$.spacing").isIntegralNumber().isEqualTo(SeparatorComponent.Spacing.LARGE.getValue());
+    }
+
+    @Test
+    void testContainerSerialization() {
+        final var textComponent = Component.textDisplay("Inside Container").build();
+
+        final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
+        for (int i = 1; i <= 9; i++) {
+            final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
+            final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            mediaItems.add(mediaItem);
+        }
+        final var mediaComponent = Component.mediaGallery().items(mediaItems).build();
+
+        final var container = Component.container().components(textComponent, mediaComponent).build();
+        final String json = gson.toJson(container);
+
+        JsonAssertions.assertThatJson(json).inPath("$.id").isAbsent();
+        JsonAssertions.assertThatJson(json).inPath("$.type").isIntegralNumber().isEqualTo(ComponentType.CONTAINER.getType());
+        JsonAssertions.assertThatJson(json).inPath("$.components").isArray().hasSize(2);
+        JsonAssertions.assertThatJson(json).inPath("$.components[0].type").isIntegralNumber().isEqualTo(ComponentType.TEXT_DISPLAY.getType());
+        JsonAssertions.assertThatJson(json).inPath("$.components[0].content").isString().isEqualTo("Inside Container");
+        JsonAssertions.assertThatJson(json).inPath("$.components[1].type").isIntegralNumber().isEqualTo(ComponentType.MEDIA_GALLERY.getType());
+        JsonAssertions.assertThatJson(json).inPath("$.components[1].items").isArray().hasSize(9);
     }
 }

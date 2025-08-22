@@ -8,7 +8,7 @@ import org.jetbrains.annotations.*;
  *
  * @see <a href="https://discord.com/developers/docs/components/reference#text-display">Text Display Component</a>
  */
-public final class TextDisplayComponent extends Component {
+public final class TextDisplayComponent extends Component implements ContainerableComponent {
     @NotNull
     private final String content;
 

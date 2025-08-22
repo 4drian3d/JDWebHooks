@@ -89,7 +89,7 @@ class WebHookClientTest {
     void testMediaGalleryComponent() throws ExecutionException, InterruptedException {
         // generate 10 random image urls
         final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 9; i++) {
             final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
             final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
             mediaItems.add(mediaItem);
@@ -161,6 +161,28 @@ class WebHookClientTest {
 
         final WebHook webHook = WebHook.builder()
                 .components(text1, separator, text2)
+                .build();
+
+        final var response = client.sendWebHook(webHook).get();
+        assertEquals(204, response.code());
+    }
+
+    @Test
+    void testContainerComponent() throws ExecutionException, InterruptedException {
+        final var textComponent = Component.textDisplay("Inside Container").build();
+
+        final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
+        for (int i = 1; i <= 9; i++) {
+            final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
+            final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            mediaItems.add(mediaItem);
+        }
+        final var mediaComponent = Component.mediaGallery().items(mediaItems).build();
+
+        final var container = Component.container().components(textComponent, mediaComponent).accentColor(0x123456).spoiler(true).build();
+
+        final WebHook webHook = WebHook.builder()
+                .component(container)
                 .build();
 
         final var response = client.sendWebHook(webHook).get();

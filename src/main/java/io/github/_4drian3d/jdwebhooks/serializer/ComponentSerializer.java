@@ -71,6 +71,20 @@ public class ComponentSerializer implements JsonSerializer<Component> {
             }
         }
 
+        if (src instanceof ContainerComponent container) {
+            object.add("components", context.serialize(container.getComponents()));
+
+            final var accentColor = container.getAccentColor();
+            if (accentColor != null) {
+                object.addProperty("accent_color", accentColor);
+            }
+
+            final var spoiler = container.getSpoiler();
+            if (spoiler == Boolean.TRUE) {
+                object.addProperty("spoiler", true);
+            }
+        }
+
         return object;
     }
 }

@@ -6,7 +6,7 @@ import java.util.*;
 
 import static java.util.Objects.*;
 
-public final class SectionComponent extends Component {
+public final class SectionComponent extends Component implements ContainerableComponent {
     @NotNull
     private final List<@NotNull TextDisplayComponent> components;
     @NotNull

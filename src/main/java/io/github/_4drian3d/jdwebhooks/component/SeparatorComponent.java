@@ -1,7 +1,7 @@
 package io.github._4drian3d.jdwebhooks.component;
 
 @SuppressWarnings("unused")
-public class SeparatorComponent extends Component {
+public final class SeparatorComponent extends Component implements ContainerableComponent {
     private final Boolean divider;
     private final Spacing spacing;
 

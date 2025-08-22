@@ -5,7 +5,7 @@ import org.jetbrains.annotations.*;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public final class MediaGalleryComponent extends Component {
+public final class MediaGalleryComponent extends Component implements ContainerableComponent {
     @NotNull
     final List<@NotNull Item> items;
 
