@@ -25,8 +25,16 @@ public class Component {
         return id;
     }
 
+    public static SectionComponent.Builder section() {
+        return new SectionComponent.Builder();
+    }
+
     public static TextDisplayComponent.Builder textDisplay() {
         return new TextDisplayComponent.Builder();
+    }
+
+    public static ThumbnailComponent.Builder thumbnail() {
+        return new ThumbnailComponent.Builder();
     }
 
     abstract static class Builder<T extends Builder<T>> {

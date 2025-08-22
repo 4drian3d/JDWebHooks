@@ -22,6 +22,27 @@ public class ComponentSerializer implements JsonSerializer<Component> {
             object.addProperty("content", textDisplay.getContent());
         }
 
+        if (src instanceof SectionComponent section) {
+            object.add("components", context.serialize(section.getComponents()));
+            object.add("accessory", context.serialize(section.getAccessory()));
+        }
+
+        if (src instanceof ThumbnailComponent thumbnail) {
+            final var mediaObject = new JsonObject();
+            mediaObject.addProperty("url", thumbnail.getMedia());
+            object.add("media", mediaObject);
+
+            final var description = thumbnail.getDescription();
+            if (description != null) {
+                object.addProperty("description", description);
+            }
+
+            final var spoiler = thumbnail.getSpoiler();
+            if (spoiler == Boolean.TRUE) {
+                object.addProperty("spoiler", true);
+            }
+        }
+
         return object;
     }
 }

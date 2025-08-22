@@ -1,14 +1,11 @@
 package io.github._4drian3d.jdwebhooks;
 
 import com.google.gson.*;
-import io.github._4drian3d.jdwebhooks.component.*;
-import io.github._4drian3d.jdwebhooks.serializer.*;
 import org.jetbrains.annotations.*;
 
 import java.net.*;
 import java.net.http.*;
 import java.nio.charset.*;
-import java.time.*;
 import java.util.concurrent.*;
 
 import static java.util.Objects.*;
@@ -23,13 +20,7 @@ public final class WebHookClient {
     private final URI webhookURL;
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final String userAgent;
-    private final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(OffsetDateTime.class, new DateSerializer())
-            .registerTypeAdapter(Embed.class, new EmbedSerializer())
-            .registerTypeAdapter(WebHook.class, new WebHookSerializer())
-            .registerTypeAdapter(AllowedMentions.class, new AllowedMentionsSerializer())
-            .registerTypeAdapter(TextDisplayComponent.class, new ComponentSerializer())
-            .create();
+    private final Gson gson = GsonProvider.getGson();
 
     private WebHookClient(final Builder builder) {
         this.webhookURL = builder.uri;

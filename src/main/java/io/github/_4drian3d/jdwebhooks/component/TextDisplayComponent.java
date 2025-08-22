@@ -12,7 +12,7 @@ public final class TextDisplayComponent extends Component {
     @NotNull
     private final String content;
 
-    TextDisplayComponent(@NotNull final String content, final int id) {
+    TextDisplayComponent(final int id, @NotNull final String content) {
         super(ComponentType.TEXT_DISPLAY, id);
         this.content = content;
     }
@@ -44,7 +44,7 @@ public final class TextDisplayComponent extends Component {
 
         @Override
         public TextDisplayComponent build() {
-            return new TextDisplayComponent(content, id);
+            return new TextDisplayComponent(id, content);
         }
     }
 }
