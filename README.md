@@ -19,7 +19,7 @@ The following API calls are supported:
     - [x] `components` field (only Components v2)
     - [x] `files[n]` field
     - [x] `attachments` field
-    - [ ] `flags` field (cannot be set manually, only IS_COMPONENTS_V2 is set automatically when components are used)
+    - [x] `flags` field
     - [x] `thread_name` field
     - [ ] `applied_tags` field
     - [ ] `poll` field
