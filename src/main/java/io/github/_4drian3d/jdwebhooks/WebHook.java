@@ -30,7 +30,9 @@ public record WebHook(
         @Nullable String threadId,
         @Nullable Boolean waitForMessage,
         @Nullable List<Component> components,
-        @Nullable List<FileAttachment> attachments
+        @Nullable List<FileAttachment> attachments,
+        @Nullable Boolean suppressEmbeds,
+        @Nullable Boolean suppressNotifications
 ) {
     public WebHook {
         // either content, embeds, or components must be provided
@@ -67,6 +69,8 @@ public record WebHook(
         private Boolean waitForMessage;
         private List<Component> components;
         private List<FileAttachment> attachments;
+        private Boolean suppressEmbeds;
+        private Boolean suppressNotifications;
 
         private Builder() {
         }
@@ -218,6 +222,16 @@ public record WebHook(
             return this;
         }
 
+        public Builder suppressEmbeds(final @Nullable Boolean suppressEmbeds) {
+            this.suppressEmbeds = suppressEmbeds;
+            return this;
+        }
+
+        public Builder suppressNotifications(final @Nullable Boolean suppressNotifications) {
+            this.suppressNotifications = suppressNotifications;
+            return this;
+        }
+
         public WebHook build() {
             return new WebHook(
                     this.content,
@@ -230,7 +244,9 @@ public record WebHook(
                     this.threadId,
                     this.waitForMessage,
                     this.components,
-                    this.attachments
+                    this.attachments,
+                    this.suppressEmbeds,
+                    this.suppressNotifications
             );
         }
     }

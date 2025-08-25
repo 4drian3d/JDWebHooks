@@ -46,6 +46,20 @@ public final class WebHookSerializer implements JsonSerializer<WebHook>, CommonS
             object.add("attachments", attachmentArray);
         }
 
+        final var suppressEmbeds = src.suppressEmbeds();
+        if(suppressEmbeds == Boolean.TRUE) {
+            // apply a 1 << 2 bitfield
+            final int existingFlags = object.get("flags") != null ? object.get("flags").getAsInt() : 0;
+            object.addProperty("flags", existingFlags | (1 << 2));
+        }
+
+        final var suppressNotifications = src.suppressNotifications();
+        if(suppressNotifications == Boolean.TRUE) {
+            // apply a 1 << 12 bitfield
+            final int existingFlags = object.get("flags") != null ? object.get("flags").getAsInt() : 0;
+            object.addProperty("flags", existingFlags | (1 << 12));
+        }
+
         return object;
     }
 
