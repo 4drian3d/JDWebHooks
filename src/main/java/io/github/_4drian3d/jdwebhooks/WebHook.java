@@ -1,12 +1,11 @@
 package io.github._4drian3d.jdwebhooks;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import io.github._4drian3d.jdwebhooks.component.*;
+import org.jetbrains.annotations.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.*;
 
 /**
  * Object containing all available items to display in a Discord WebHook.
@@ -21,16 +20,29 @@ import static java.util.Objects.requireNonNull;
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public record WebHook(
-        @NotNull String content,
+        @Nullable String content,
         @Nullable String username,
         @Nullable String avatarURL,
         @Nullable Boolean tts,
         @Nullable List<Embed> embeds,
         @Nullable AllowedMentions allowedMentions,
-        @Nullable String threadName
+        @Nullable String threadName,
+        @Nullable String threadId,
+        @Nullable Boolean waitForMessage,
+        @Nullable List<Component> components,
+        @Nullable List<FileAttachment> attachments,
+        @Nullable Boolean suppressEmbeds,
+        @Nullable Boolean suppressNotifications
 ) {
     public WebHook {
-        requireNonNull(content, "content");
+        // either content, embeds, or components must be provided
+        if (content == null && (embeds == null || embeds.isEmpty()) && (components == null || components.isEmpty())) {
+            throw new IllegalArgumentException("Either content, embeds, or components must be provided");
+        }
+        // if components exist, content and embeds must be null
+        if (components != null && !components.isEmpty() && (content != null || embeds != null)) {
+            throw new IllegalArgumentException("If components are provided, content and embeds must be null");
+        }
     }
 
     /**
@@ -46,21 +58,25 @@ public record WebHook(
      * WebHook Builder
      */
     public static final class Builder {
-        private String content = "";
+        private String content;
         private String username;
         private String avatarURL;
         private Boolean tts;
         private List<Embed> embeds;
         private AllowedMentions allowedMentions;
         private String threadName;
+        private String threadId;
+        private Boolean waitForMessage;
+        private List<Component> components;
+        private List<FileAttachment> attachments;
+        private Boolean suppressEmbeds;
+        private Boolean suppressNotifications;
 
         private Builder() {
         }
 
         /**
          * Sets the content string of this embed.
-         * <p>It can be an empty string and in case no content is provided,
-         * an empty string will be used</p>
          *
          * @param content the content string
          * @return this builder
@@ -132,6 +148,90 @@ public record WebHook(
             return this;
         }
 
+        /**
+         * Sets the ID of an existing thread to send the message in.
+         *
+         * @param threadId The "thread_id" query parameter
+         * @return this builder
+         * @see <a href=https://discord.com/developers/docs/resources/webhook#execute-webhook-query-string-params>Execute Webhook Query String Params</a>
+         */
+        public Builder threadId(final @Nullable String threadId) {
+            this.threadId = threadId;
+            return this;
+        }
+
+        /**
+         * Sets whether the response should wait for the message to be created.
+         *
+         * @param waitForMessage the "wait" query parameter
+         * @return this builder
+         * @see <a href=https://discord.com/developers/docs/resources/webhook#execute-webhook-query-string-params>Execute Webhook Query String Params</a>
+         */
+        public Builder waitForMessage(final @Nullable Boolean waitForMessage) {
+            this.waitForMessage = waitForMessage;
+            return this;
+        }
+
+        public Builder component(final @NotNull Component component) {
+            requireNonNull(component);
+            if (this.components == null) {
+                this.components = new ArrayList<>();
+            }
+            this.components.add(component);
+            return this;
+        }
+
+        public Builder components(final @NotNull List<@NotNull Component> components) {
+            requireNonNull(components);
+            for (final Component embed : components) {
+                this.component(embed);
+            }
+            return this;
+        }
+
+        public Builder components(@NotNull Component @NotNull ... components) {
+            requireNonNull(components);
+            for (final Component embed : components) {
+                this.component(embed);
+            }
+            return this;
+        }
+
+        public Builder attachment(final @NotNull FileAttachment attachment) {
+            requireNonNull(attachment);
+            if (this.attachments == null) {
+                this.attachments = new ArrayList<>();
+            }
+            this.attachments.add(attachment);
+            return this;
+        }
+
+        public Builder attachments(final @NotNull List<@NotNull FileAttachment> attachments) {
+            requireNonNull(attachments);
+            for (final FileAttachment attachment : attachments) {
+                this.attachment(attachment);
+            }
+            return this;
+        }
+
+        public Builder attachments(@NotNull FileAttachment @NotNull ... attachments) {
+            requireNonNull(attachments);
+            for (final FileAttachment attachment : attachments) {
+                this.attachment(attachment);
+            }
+            return this;
+        }
+
+        public Builder suppressEmbeds(final @Nullable Boolean suppressEmbeds) {
+            this.suppressEmbeds = suppressEmbeds;
+            return this;
+        }
+
+        public Builder suppressNotifications(final @Nullable Boolean suppressNotifications) {
+            this.suppressNotifications = suppressNotifications;
+            return this;
+        }
+
         public WebHook build() {
             return new WebHook(
                     this.content,
@@ -140,7 +240,13 @@ public record WebHook(
                     this.tts,
                     this.embeds,
                     this.allowedMentions,
-                    this.threadName
+                    this.threadName,
+                    this.threadId,
+                    this.waitForMessage,
+                    this.components,
+                    this.attachments,
+                    this.suppressEmbeds,
+                    this.suppressNotifications
             );
         }
     }
