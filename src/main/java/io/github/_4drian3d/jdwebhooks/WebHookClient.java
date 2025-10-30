@@ -1,20 +1,15 @@
 package io.github._4drian3d.jdwebhooks;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import io.github._4drian3d.jdwebhooks.serializer.*;
-import org.jetbrains.annotations.NotNull;
+import com.google.gson.*;
+import okhttp3.*;
+import org.jetbrains.annotations.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.time.OffsetDateTime;
-import java.util.concurrent.CompletableFuture;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.util.concurrent.*;
 
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.*;
 
 /**
  * An object capable of sending requests to publish WebHooks in a given Discord channel.
@@ -24,14 +19,9 @@ public final class WebHookClient {
     private static final String BASE_URL = "https://discord.com/api/webhooks/%s/%s";
     private static final String DEFAULT_AGENT = "github/4drian3d/JDWebhooks";
     private final URI webhookURL;
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final OkHttpClient httpClient = new OkHttpClient();
     private final String userAgent;
-    private final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(OffsetDateTime.class, new DateSerializer())
-            .registerTypeAdapter(Embed.class, new EmbedSerializer())
-            .registerTypeAdapter(WebHook.class, new WebHookSerializer())
-            .registerTypeAdapter(AllowedMentions.class, new AllowedMentionsSerializer())
-            .create();
+    private final Gson gson = GsonProvider.getGson();
 
     private WebHookClient(final Builder builder) {
         this.webhookURL = builder.uri;
@@ -79,22 +69,81 @@ public final class WebHookClient {
      * @param webHook the webhook to send
      * @return a CompletableFuture with the result of this request
      */
-    public CompletableFuture<HttpResponse<String>> sendWebHook(final @NotNull WebHook webHook) {
+    public CompletableFuture<Response> sendWebHook(final @NotNull WebHook webHook) {
         requireNonNull(webHook, "webhook");
-        final String json = gson.toJson(webHook);
 
-        return sendRequest(json);
-    }
+        final var urlBuilder = requireNonNull(HttpUrl.parse(this.webhookURL.toString())).newBuilder();
 
-    private CompletableFuture<HttpResponse<String>> sendRequest(final String json) {
-        final HttpRequest request = HttpRequest.newBuilder()
-                .uri(this.webhookURL)
-                .header("User-Agent", this.userAgent)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
+        // check for waitForMessage
+        if (webHook.waitForMessage() != null && webHook.waitForMessage()) {
+            urlBuilder.addQueryParameter("wait", "true");
+        }
+
+        // check for threadId
+        if (webHook.threadId() != null && !webHook.threadId().isEmpty()) {
+            urlBuilder.addQueryParameter("thread_id", webHook.threadId());
+        }
+
+        // if we have components add with_components
+        if (webHook.components() != null && !webHook.components().isEmpty()) {
+            urlBuilder.addQueryParameter("with_components", "true");
+        }
+
+        // build the request body
+        final RequestBody body;
+        try {
+            body = getBody(webHook);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        final var request = new Request.Builder()
+                .url(urlBuilder.build())
+                .post(body)
+                .addHeader("User-Agent", this.userAgent)
                 .build();
 
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        final var future = new CompletableFuture<Response>();
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(e);
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                future.complete(response);
+            }
+        });
+
+        return future;
+    }
+
+    private RequestBody getBody(final @NotNull WebHook webHook) throws IOException {
+        if (webHook.attachments() == null || webHook.attachments().isEmpty()) {
+            final String json = gson.toJson(webHook);
+            return RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+        } else {
+            final var multipartBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+
+            // add payload_json part
+            final String json = gson.toJson(webHook);
+            final var jsonBody = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+            multipartBuilder.addFormDataPart("payload_json", null, jsonBody);
+
+            // add files parts
+            for (int i = 0; i < webHook.attachments().size(); i++) {
+                final FileAttachment attachment = webHook.attachments().get(i);
+
+                final var file = attachment.file();
+                final var fileType = Files.probeContentType(file.toPath());
+
+                final RequestBody fileBody = RequestBody.create(attachment.file(), fileType != null ? MediaType.get(fileType) : MediaType.get("application/octet-stream"));
+                multipartBuilder.addFormDataPart("files[" + i + "]", attachment.getFilename(), fileBody);
+            }
+
+            return multipartBuilder.build();
+        }
+
     }
 
     /**

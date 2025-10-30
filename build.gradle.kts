@@ -15,12 +15,23 @@ repositories {
 dependencies {
     compileOnlyApi(libs.annotations)
     implementation(libs.gson)
+    implementation(libs.okhttp)
+
+    // JUnit
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.11.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
+
+    // JsonUnit
+    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:4.1.1")
 }
 
 tasks {
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
+        options.compilerArgs.add("-Xlint:-processing")
     }
     javadoc {
         options.encoding = Charsets.UTF_8.name()
@@ -29,6 +40,10 @@ tasks {
             "https://www.javadocs.dev/com.google.code.gson/gson/${libs.versions.gson.get()}",
             "https://www.javadocs.dev/org.jetbrains/annotations/${libs.versions.annotations.get()}"
         )
+    }
+    test {
+        useJUnitPlatform()
+        environment("DISCORD_WEBHOOK_URL", System.getenv("DISCORD_WEBHOOK_URL"))
     }
 }
 
