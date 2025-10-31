@@ -24,7 +24,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
 
     // JsonUnit
-    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:4.1.1")
+    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:5.0.0")
 }
 
 tasks {
