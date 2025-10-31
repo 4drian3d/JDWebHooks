@@ -9,7 +9,6 @@ public class ComponentSerializer implements JsonSerializer<Component> {
     @Override
     public JsonElement serialize(Component src, Type typeOfSrc, JsonSerializationContext context) {
         final JsonObject object = new JsonObject();
-
         object.addProperty("type", src.componentType().getType());
 
         final var id = src.id();

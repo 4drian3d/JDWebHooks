@@ -18,6 +18,10 @@ public sealed interface MediaGalleryComponent extends Component, ContainerableCo
     @Nullable
     Boolean spoiler();
 
+    static Builder builder() {
+      return new MediaGalleryComponentImpl.Item.Builder();
+    }
+
     sealed interface Builder permits MediaGalleryComponentImpl.Item.Builder {
       Builder media(final String media);
 

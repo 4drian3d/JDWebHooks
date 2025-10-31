@@ -43,6 +43,13 @@ record WebHookImpl(
 
     @Override
     @NonNull
+    public Builder queryParameters(@Nullable QueryParameters queryParameters) {
+      this.queryParameters = queryParameters;
+      return this;
+    }
+
+    @Override
+    @NonNull
     public Builder username(final String username) {
       this.username = requireNonNull(username);
       return this;

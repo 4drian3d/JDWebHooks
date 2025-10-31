@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public interface WebHook {
+public sealed interface WebHook permits WebHookImpl {
 
   @Nullable
   QueryParameters queryParameters();
@@ -47,7 +47,9 @@ public interface WebHook {
    * WebHookImpl Builder
    */
   @NullMarked
-  interface Builder {
+  sealed interface Builder permits WebHookImpl.Builder {
+
+    Builder queryParameters(QueryParameters queryParameters);
     /**
      * Sets the override username of this WebHookImpl.
      *

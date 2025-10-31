@@ -45,7 +45,6 @@ The following API calls are supported:
 
 ## Requirements
 - Java 17
-- OkHttp 5.1.0 to be included in the classpath (it's not shaded in the jar)
 
 ## Usage
 
@@ -56,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.4drian3d:jdwebhooks:1.0.1")
+    implementation("io.github.4drian3d:jdwebhooks:2.0.0")
 }
 ```
 
@@ -69,17 +68,15 @@ dependencies {
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
-public class Main {
-    public static void main(String[] args) {
-        final WebHookClient client = WebHookClient.from("id", "token"); // or WebHookClient.from(url);
+void main() {
+  final WebHookClient client = WebHookClient.from("id", "token"); // or WebHookClient.from(url);
 
-        final WebHook webHook = WebHook.builder()
-                .username("4drian3d was here")
-                .embed(embed)
-                .build();
+  final WebHook webHook = WebHook.builder()
+      .username("4drian3d was here")
+      .embed(embed)
+      .build();
 
-        final CompletableFuture<HttpResponse<String>> futureResponse = client.sendWebHook(webHook);
-    }
+  final CompletableFuture<HttpResponse<String>> futureResponse = client.sendWebHook(webHook);
 }
 
 ```

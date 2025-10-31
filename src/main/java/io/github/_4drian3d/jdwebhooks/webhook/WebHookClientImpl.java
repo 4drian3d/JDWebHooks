@@ -5,12 +5,10 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.util.concurrent.*;
 
 import static java.util.Objects.*;
@@ -24,7 +22,7 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
   static final String DEFAULT_AGENT = "github/4drian3d/JDWebhooks";
 
   WebHookClientImpl(String webhookURL, String userAgent) {
-    this(webhookURL, userAgent, GsonProvider.getGson(), HttpClient.newHttpClient());
+    this(webhookURL, userAgent, GsonProvider.provide(), HttpClient.newHttpClient());
   }
 
   @Override
