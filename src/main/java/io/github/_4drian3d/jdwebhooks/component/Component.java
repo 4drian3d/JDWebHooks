@@ -1,71 +1,43 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class for all components, containing the required type and optional id fields.
  */
-public class Component {
-    @NotNull
-    private final ComponentType type;
+@NullMarked
+public sealed interface Component permits ContainerComponent, FileComponent, MediaGalleryComponent, SectionComponent, SeparatorComponent, TextDisplayComponent, ThumbnailComponent {
+  ComponentType componentType();
 
-    private final int id;
+  @Nullable
+  Integer id();
 
-    Component(@NotNull final ComponentType type, final int id) {
-        this.type = type;
-        this.id = id;
-    }
+  static SectionComponent.Builder section() {
+    return new SectionComponentImpl.Builder();
+  }
 
-    @NotNull
-    public ComponentType getType() {
-        return type;
-    }
+  static TextDisplayComponent.Builder textDisplay() {
+    return new TextDisplayComponentImpl.Builder();
+  }
 
-    public int getId() {
-        return id;
-    }
+  static ThumbnailComponent.Builder thumbnail() {
+    return new ThumbnailComponentImpl.Builder();
+  }
 
-    public static SectionComponent.Builder section() {
-        return new SectionComponent.Builder();
-    }
+  static MediaGalleryComponent.Builder mediaGallery() {
+    return new MediaGalleryComponentImpl.Builder();
+  }
 
-    public static TextDisplayComponent.Builder textDisplay(@NotNull final String content) {
-        return new TextDisplayComponent.Builder(content);
-    }
+  static FileComponent.Builder file() {
+    return new FileComponentImpl.Builder();
+  }
 
-    public static ThumbnailComponent.Builder thumbnail(@NotNull final String media) {
-        return new ThumbnailComponent.Builder(media);
-    }
+  static SeparatorComponent.Builder separator() {
+    return new SeparatorComponentImpl.Builder();
+  }
 
-    public static MediaGalleryComponent.Builder mediaGallery() {
-        return new MediaGalleryComponent.Builder();
-    }
-
-    public static FileComponent.Builder file(@NotNull final String file) {
-        return new FileComponent.Builder(file);
-    }
-
-    public static SeparatorComponent.Builder separator() {
-        return new SeparatorComponent.Builder();
-    }
-
-    public static ContainerComponent.Builder container() {
-        return new ContainerComponent.Builder();
-    }
-
-    abstract static class Builder<T extends Builder<T>> {
-        protected int id;
-
-        public Builder() {
-            this.id = 0;
-        }
-
-        @SuppressWarnings("unchecked")
-        public T setId(final int id) {
-            this.id = id;
-            return (T) this;
-        }
-
-        public abstract Component build();
-    }
+  static ContainerComponent.Builder container() {
+    return new ContainerComponentImpl.BuilderImpl();
+  }
 }

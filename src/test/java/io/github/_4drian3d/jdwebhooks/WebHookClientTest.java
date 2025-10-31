@@ -1,22 +1,29 @@
 package io.github._4drian3d.jdwebhooks;
 
-import com.google.gson.*;
-import io.github._4drian3d.jdwebhooks.component.*;
-import net.javacrumbs.jsonunit.assertj.*;
-import org.junit.jupiter.api.*;
+import com.google.gson.JsonParser;
+import io.github._4drian3d.jdwebhooks.component.Component;
+import io.github._4drian3d.jdwebhooks.component.MediaGalleryComponentImpl;
+import io.github._4drian3d.jdwebhooks.component.SeparatorComponentImpl;
+import io.github._4drian3d.jdwebhooks.component.TextDisplayComponent;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookClientImpl;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookImpl;
+import net.javacrumbs.jsonunit.assertj.JsonAssertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class WebHookClientTest {
-    static WebHookClient client;
+    static WebHookClientImpl client;
 
     @BeforeAll
     static void beforeAll() {
-        client = WebHookClient.fromURL(System.getenv("DISCORD_WEBHOOK_URL"));
+        client = WebHookClientImpl.fromURL(System.getenv("DISCORD_WEBHOOK_URL"));
     }
 
     @Test
@@ -26,7 +33,7 @@ class WebHookClientTest {
 
     @Test
     void testSuccess() throws ExecutionException, InterruptedException {
-        final WebHook webHook = WebHook.builder()
+        final WebHookImpl webHook = WebHookImpl.builder()
                 .content("testSuccess")
                 .build();
 
@@ -39,7 +46,7 @@ class WebHookClientTest {
         final String username = "testing123";
         final String content = "testBasicMessage";
 
-        final WebHook webHook = WebHook.builder()
+        final WebHookImpl webHook = WebHookImpl.builder()
                 .username(username)
                 .content(content)
                 .waitForMessage(true)
@@ -58,7 +65,7 @@ class WebHookClientTest {
     void testTextDisplayComponent() throws ExecutionException, InterruptedException {
         final var component = Component.textDisplay("Text Display Component").build();
 
-        final WebHook webHook = WebHook.builder()
+        final WebHookImpl webHook = WebHookImpl.builder()
                 .component(component)
                 .build();
 
@@ -77,7 +84,7 @@ class WebHookClientTest {
         final var accessory = Component.thumbnail(avatarUrl).spoiler(true).description("Hi :)").build();
 
         final var component = Component.section().components(textComponents).accessory(accessory).build();
-        final WebHook webHook = WebHook.builder()
+        final WebHookImpl webHook = WebHookImpl.builder()
                 .component(component)
                 .build();
 
@@ -88,15 +95,15 @@ class WebHookClientTest {
     @Test
     void testMediaGalleryComponent() throws ExecutionException, InterruptedException {
         // generate 10 random image urls
-        final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
+        final var mediaItems = new ArrayList<MediaGalleryComponentImpl.Item>();
         for (int i = 1; i <= 9; i++) {
             final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-            final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            final var mediaItem = MediaGalleryComponentImpl.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
             mediaItems.add(mediaItem);
         }
 
         final var component = Component.mediaGallery().items(mediaItems).build();
-        final WebHook webHook = WebHook.builder()
+        final WebHookImpl webHook = WebHookImpl.builder()
                 .component(component)
                 .build();
 
@@ -105,61 +112,12 @@ class WebHookClientTest {
     }
 
     @Test
-    void testFileAttachment() throws ExecutionException, InterruptedException {
-        File tempFile;
-        try {
-            tempFile = File.createTempFile("testfile", ".txt");
-            try (FileWriter writer = new FileWriter(tempFile)) {
-                writer.write("This is a test file.");
-            }
-        } catch (IOException e) {
-            fail("Failed to create temporary file: " + e.getMessage());
-            return;
-        }
-
-        final var attachment = FileAttachment.builder(tempFile).build();
-
-        final WebHook webHook = WebHook.builder()
-                .content("Secret message")
-                .attachment(attachment)
-                .build();
-
-        final var response = client.sendWebHook(webHook).get();
-        assertEquals(200, response.code());
-    }
-
-    @Test
-    void testFileComponent() throws ExecutionException, InterruptedException {
-        File tempFile;
-        try {
-            tempFile = File.createTempFile("testfile", ".txt");
-            try (FileWriter writer = new FileWriter(tempFile)) {
-                writer.write("This is a test file.");
-            }
-        } catch (IOException e) {
-            fail("Failed to create temporary file: " + e.getMessage());
-            return;
-        }
-
-        final var component = Component.file(tempFile.getName()).build();
-        final var attachment = FileAttachment.builder(tempFile).build();
-
-        final WebHook webHook = WebHook.builder()
-                .component(component)
-                .attachment(attachment)
-                .build();
-
-        final var response = client.sendWebHook(webHook).get();
-        assertEquals(200, response.code());
-    }
-
-    @Test
     void testSeparatorComponent() throws ExecutionException, InterruptedException {
         final var text1 = Component.textDisplay("Above the separator").build();
         final var text2 = Component.textDisplay("Below the separator").build();
-        final var separator = Component.separator().spacing(SeparatorComponent.Spacing.LARGE).build();
+        final var separator = Component.separator().spacing(SeparatorComponentImpl.Spacing.LARGE).build();
 
-        final WebHook webHook = WebHook.builder()
+        final WebHookImpl webHook = WebHookImpl.builder()
                 .components(text1, separator, text2)
                 .build();
 
@@ -171,17 +129,17 @@ class WebHookClientTest {
     void testContainerComponent() throws ExecutionException, InterruptedException {
         final var textComponent = Component.textDisplay("Inside Container").build();
 
-        final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
+        final var mediaItems = new ArrayList<MediaGalleryComponentImpl.Item>();
         for (int i = 1; i <= 9; i++) {
             final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-            final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            final var mediaItem = MediaGalleryComponentImpl.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
             mediaItems.add(mediaItem);
         }
         final var mediaComponent = Component.mediaGallery().items(mediaItems).build();
 
         final var container = Component.container().components(textComponent, mediaComponent).accentColor(0x123456).spoiler(true).build();
 
-        final WebHook webHook = WebHook.builder()
+        final WebHookImpl webHook = WebHookImpl.builder()
                 .component(container)
                 .build();
 

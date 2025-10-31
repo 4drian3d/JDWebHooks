@@ -2,6 +2,7 @@ package io.github._4drian3d.jdwebhooks;
 
 import com.google.gson.*;
 import io.github._4drian3d.jdwebhooks.component.*;
+import io.github._4drian3d.jdwebhooks.webhook.GsonProvider;
 import net.javacrumbs.jsonunit.assertj.*;
 import org.junit.jupiter.api.*;
 
@@ -79,10 +80,10 @@ public class ComponentSerializerTest {
     @Test
     void testMediaGallerySerialization() {
         // generate 10 random image urls
-        final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
+        final var mediaItems = new ArrayList<MediaGalleryComponentImpl.Item>();
         for (int i = 1; i <= 9; i++) {
             final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-            final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            final var mediaItem = MediaGalleryComponentImpl.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
             mediaItems.add(mediaItem);
         }
 
@@ -118,22 +119,22 @@ public class ComponentSerializerTest {
 
     @Test
     void testSeparatorSerialization() {
-        final var component = Component.separator().spacing(SeparatorComponent.Spacing.LARGE).build();
+        final var component = Component.separator().spacing(SeparatorComponentImpl.Spacing.LARGE).build();
         final String json = gson.toJson(component);
 
         JsonAssertions.assertThatJson(json).inPath("$.id").isAbsent();
         JsonAssertions.assertThatJson(json).inPath("$.type").isIntegralNumber().isEqualTo(ComponentType.SEPARATOR.getType());
-        JsonAssertions.assertThatJson(json).inPath("$.spacing").isIntegralNumber().isEqualTo(SeparatorComponent.Spacing.LARGE.getValue());
+        JsonAssertions.assertThatJson(json).inPath("$.spacing").isIntegralNumber().isEqualTo(SeparatorComponentImpl.Spacing.LARGE.getValue());
     }
 
     @Test
     void testContainerSerialization() {
         final var textComponent = Component.textDisplay("Inside Container").build();
 
-        final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
+        final var mediaItems = new ArrayList<MediaGalleryComponentImpl.Item>();
         for (int i = 1; i <= 9; i++) {
             final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-            final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            final var mediaItem = MediaGalleryComponentImpl.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
             mediaItems.add(mediaItem);
         }
         final var mediaComponent = Component.mediaGallery().items(mediaItems).build();

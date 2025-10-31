@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-sealed interface CommonSerializer permits EmbedSerializer, WebHookSerializer, AllowedMentionsSerializer {
+sealed interface CommonSerializer permits WebHookSerializer, AllowedMentionsSerializer {
     default void addNonNull(
             final @NotNull JsonObject object,
             final @NotNull String name,

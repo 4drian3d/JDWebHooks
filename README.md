@@ -72,12 +72,6 @@ import java.util.concurrent.CompletableFuture;
 public class Main {
     public static void main(String[] args) {
         final WebHookClient client = WebHookClient.from("id", "token"); // or WebHookClient.from(url);
-        final Embed embed = Embed.builder()
-                .author(Embed.Author.builder().name("4drian3d").build())
-                .timestamp(Instant.now())
-                .color(0xFF0000)
-                .title("My first Discord WebHook")
-                .build();
 
         final WebHook webHook = WebHook.builder()
                 .username("4drian3d was here")

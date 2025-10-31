@@ -1,6 +1,7 @@
-package io.github._4drian3d.jdwebhooks;
+package io.github._4drian3d.jdwebhooks.webhook;
 
 import com.google.gson.*;
+import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
 import io.github._4drian3d.jdwebhooks.component.*;
 import io.github._4drian3d.jdwebhooks.serializer.*;
 
@@ -12,8 +13,7 @@ class GsonProvider {
 
         return new GsonBuilder()
                 .registerTypeAdapter(OffsetDateTime.class, new DateSerializer())
-                .registerTypeAdapter(Embed.class, new EmbedSerializer())
-                .registerTypeAdapter(WebHook.class, new WebHookSerializer())
+                .registerTypeAdapter(WebHookImpl.class, new WebHookSerializer())
                 .registerTypeAdapter(AllowedMentions.class, new AllowedMentionsSerializer())
                 .registerTypeAdapter(SectionComponent.class, componentSerializer)
                 .registerTypeAdapter(TextDisplayComponent.class, componentSerializer)

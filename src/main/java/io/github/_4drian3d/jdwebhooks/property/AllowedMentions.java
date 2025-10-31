@@ -1,4 +1,4 @@
-package io.github._4drian3d.jdwebhooks;
+package io.github._4drian3d.jdwebhooks.property;
 
 import org.jetbrains.annotations.*;
 

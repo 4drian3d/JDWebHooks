@@ -1,93 +1,39 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
 
-@SuppressWarnings("unused")
-public final class MediaGalleryComponent extends Component implements ContainerableComponent {
-    @NotNull
-    final List<@NotNull Item> items;
+@NullMarked
+public sealed interface MediaGalleryComponent extends Component, ContainerableComponent permits MediaGalleryComponentImpl {
+  List<Item> items();
 
-    MediaGalleryComponent(final int id, @NotNull final List<@NotNull Item> items) {
-        super(ComponentType.MEDIA_GALLERY, id);
+  sealed interface Item permits MediaGalleryComponentImpl.Item {
+    String media();
 
-        if (items.isEmpty() || items.size() > 10) {
-            throw new IllegalArgumentException("Media gallery must have between 1 and 10 items.");
-        }
-        this.items = List.copyOf(items);
+    @Nullable
+    String description();
+
+    @Nullable
+    Boolean spoiler();
+
+    sealed interface Builder permits MediaGalleryComponentImpl.Item.Builder {
+      Builder media(final String media);
+
+      Builder description(final @Nullable String description);
+
+      Builder spoiler(final @Nullable Boolean spoiler);
+
+      Item build();
     }
+  }
 
-    @NotNull
-    public List<@NotNull Item> getItems() {
-        return items;
-    }
+  sealed interface Builder extends ComponentBuilder<MediaGalleryComponent, Builder> permits MediaGalleryComponentImpl.Builder {
+    Builder item(final Item item);
 
-    public static Item.Builder item(@NotNull final String media) {
-        return new Item.Builder(media);
-    }
+    Builder items(final Item... items);
 
-    public record Item(@NotNull String media, String description, Boolean spoiler) {
-        public static class Builder {
-            @NotNull
-            private String media;
-            private String description;
-            private Boolean spoiler;
-
-            Builder(@NotNull final String media) {
-                this.media = media;
-            }
-
-            public Builder media(@NotNull final String media) {
-                this.media = media;
-                return this;
-            }
-
-            public Builder description(final String description) {
-                this.description = description;
-                return this;
-            }
-
-            public Builder spoiler(final Boolean spoiler) {
-                this.spoiler = spoiler;
-                return this;
-            }
-
-            public Item build() {
-                return new Item(media, description, spoiler);
-            }
-        }
-    }
-
-    public static class Builder extends Component.Builder<Builder> {
-        @NotNull
-        private final List<@NotNull Item> items;
-
-        Builder() {
-            super();
-            this.items = new ArrayList<>();
-        }
-
-        public Builder item(@NotNull final Item item) {
-            this.items.add(item);
-            return this;
-        }
-
-        public Builder items(@NotNull final Item... items) {
-            this.items.clear();
-            Collections.addAll(this.items, items);
-            return this;
-        }
-
-        public Builder items(@NotNull final List<@NotNull Item> items) {
-            this.items.clear();
-            this.items.addAll(items);
-            return this;
-        }
-
-        @Override
-        public MediaGalleryComponent build() {
-            return new MediaGalleryComponent(id, items);
-        }
-    }
+    Builder items(final List<Item> items);
+  }
 }

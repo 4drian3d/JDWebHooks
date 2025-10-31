@@ -13,7 +13,8 @@ repositories {
 }
 
 dependencies {
-    compileOnlyApi(libs.annotations)
+    compileOnlyApi(libs.annotations.jetbrains)
+    compileOnlyApi(libs.annotations.jspecify)
     implementation(libs.gson)
     implementation(libs.okhttp)
 
@@ -30,15 +31,15 @@ dependencies {
 tasks {
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(17)
+        options.release.set(21)
         options.compilerArgs.add("-Xlint:-processing")
     }
     javadoc {
         options.encoding = Charsets.UTF_8.name()
         (options as StandardJavadocDocletOptions).links(
-            "https://docs.oracle.com/en/java/javase/17/docs/api/",
+            "https://docs.oracle.com/en/java/javase/21/docs/api/",
             "https://www.javadocs.dev/com.google.code.gson/gson/${libs.versions.gson.get()}",
-            "https://www.javadocs.dev/org.jetbrains/annotations/${libs.versions.annotations.get()}"
+            "https://www.javadocs.dev/org.jetbrains/annotations/${libs.versions.annotations.jetbrains.get()}"
         )
     }
     test {
