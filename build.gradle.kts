@@ -13,10 +13,8 @@ repositories {
 }
 
 dependencies {
-    compileOnlyApi(libs.annotations.jetbrains)
     compileOnlyApi(libs.annotations.jspecify)
     implementation(libs.gson)
-    implementation(libs.okhttp)
 
     // JUnit
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
@@ -39,7 +37,7 @@ tasks {
         (options as StandardJavadocDocletOptions).links(
             "https://docs.oracle.com/en/java/javase/21/docs/api/",
             "https://www.javadocs.dev/com.google.code.gson/gson/${libs.versions.gson.get()}",
-            "https://www.javadocs.dev/org.jetbrains/annotations/${libs.versions.annotations.jetbrains.get()}"
+            "https://www.javadocs.dev/org.jspecify/jspecify/${libs.versions.annotations.jspecify.get()}"
         )
     }
     test {

@@ -1,7 +1,6 @@
 package io.github._4drian3d.jdwebhooks.webhook;
 
-import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.net.URI;
 import java.net.http.HttpResponse;
@@ -9,6 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static io.github._4drian3d.jdwebhooks.webhook.WebHookClientImpl.DEFAULT_AGENT;
 
+@NullMarked
 public interface WebHookClient {
   /**
    * Sends the specified WebHookImpl.
@@ -16,7 +16,7 @@ public interface WebHookClient {
    * @param webHook the webhook to send
    * @return a CompletableFuture with the result of this request
    */
-  CompletableFuture<HttpResponse<String>> sendWebHook(final @NotNull WebHook webHook);
+  CompletableFuture<HttpResponse<String>> sendWebHook(final WebHook webHook);
 
   /**
    * Creates a new WebHookClientImpl based on a {@link URI}.
@@ -25,7 +25,7 @@ public interface WebHookClient {
    * @return a new WebHookClientImpl
    * @throws IllegalArgumentException if the provided URL is invalid
    */
-  static WebHookClient fromURL(final @NotNull String uri) {
+  static WebHookClient fromURL(final String uri) {
     return builder().uri(uri).agent(DEFAULT_AGENT).build();
   }
 
@@ -38,7 +38,7 @@ public interface WebHookClient {
    * @throws IllegalArgumentException if the provided id or token are is invalid
    * @see #fromURL(String)
    */
-  static WebHookClient from(final @NotNull String id, final @NotNull String token) {
+  static WebHookClient from(final String id, final String token) {
     return builder().credentials(id, token).agent(DEFAULT_AGENT).build();
   }
 
@@ -64,7 +64,7 @@ public interface WebHookClient {
      * @return this builder
      * @throws IllegalArgumentException if the provided URL is invalid
      */
-    Builder uri(final @NonNull String uri);
+    Builder uri(final String uri);
 
     /**
      * Set credentials for sending webhooks
@@ -74,7 +74,7 @@ public interface WebHookClient {
      * @return this builder
      * @throws IllegalArgumentException if the provided id or token are is invalid
      */
-    Builder credentials(final @NotNull String id, final @NotNull String token);
+    Builder credentials(final String id, final String token);
 
     /**
      * Sets the user agent to use
@@ -82,7 +82,7 @@ public interface WebHookClient {
      * @param agent the user agent
      * @return this builder
      */
-    Builder agent(final @NotNull String agent);
+    Builder agent(final String agent);
 
     /**
      * Creates a new WebHookClientImpl based on the configuration of this builder

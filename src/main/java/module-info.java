@@ -4,7 +4,6 @@
 module io.github._4drian3d.jdwebhooks {
   requires com.google.gson;
   requires java.net.http;
-  requires static transitive org.jetbrains.annotations;
   requires static transitive org.jspecify;
 
   exports io.github._4drian3d.jdwebhooks.component;

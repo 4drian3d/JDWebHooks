@@ -2,19 +2,11 @@ metadata.format.version = "1.1"
 
 [versions]
 
-indra = "4.0.0"
 gson = "2.13.2"
-annotations-jetbrains = "26.0.2-1"
 annotations-jspecify = "1.0.0"
-okhttp = "5.1.0"
 
 [libraries]
 
-annotations-jetbrains = { group = "org.jetbrains", name = "annotations", version.ref = "annotations-jetbrains" }
 annotations-jspecify = { group = "org.jspecify" , name = "jspecify", version.ref = "annotations-jspecify"}
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 
-[plugins]
-
-indra = { id = "net.kyori.indra.publishing", version.ref = "indra" }

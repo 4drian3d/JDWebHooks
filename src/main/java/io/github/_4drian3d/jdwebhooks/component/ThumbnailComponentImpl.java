@@ -1,6 +1,5 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import org.jetbrains.annotations.*;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -15,7 +14,7 @@ record ThumbnailComponentImpl(
     @Nullable Boolean spoiler
 ) implements ThumbnailComponent {
 
-  ThumbnailComponentImpl(final Integer id, @NotNull final String media, final String description, final Boolean spoiler) {
+  ThumbnailComponentImpl(final Integer id, @NonNull final String media, final String description, final Boolean spoiler) {
     this(id, ComponentType.THUMBNAIL, media, description, spoiler);
   }
 
@@ -26,7 +25,7 @@ record ThumbnailComponentImpl(
 
     @NonNull
     @Override
-    public Builder media(@NotNull final String media) {
+    public Builder media(final @NonNull String media) {
       this.media = media;
       return this;
     }
