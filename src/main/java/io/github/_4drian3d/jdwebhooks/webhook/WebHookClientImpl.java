@@ -1,6 +1,8 @@
 package io.github._4drian3d.jdwebhooks.webhook;
 
 import com.google.gson.Gson;
+import io.github._4drian3d.jdwebhooks.http.HTTPMultiPartBody;
+import io.github._4drian3d.jdwebhooks.http.MultiPartRecord;
 import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -10,6 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.concurrent.*;
 
 import static java.util.Objects.*;
@@ -27,26 +30,36 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
         .executor(Executors.newVirtualThreadPerTaskExecutor()).build());
   }
 
+  @NonNull
   @Override
   public CompletableFuture<HttpResponse<String>> sendWebHook(final @NonNull WebHook webHook) {
     requireNonNull(webHook, "webhook");
 
     final String json = gson.toJson(webHook);
 
-    return sendRequest(json, webHook.queryParameters());
-  }
+    final HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+        .uri(encodeURL(webHook.queryParameters()))
+        .header("User-Agent", this.userAgent);
 
-  private CompletableFuture<HttpResponse<String>> sendRequest(final String json, QueryParameters queryParameters) {
-    final HttpRequest request = HttpRequest.newBuilder()
-        .uri(encodeURL(queryParameters))
-        .header("User-Agent", this.userAgent)
-        .header("Content-Type", "application/json")
-        .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
-        .build();
+    final List<FileAttachment> attachments = webHook.fileAttachments();
+    if (attachments != null && !attachments.isEmpty()) {
+      final HTTPMultiPartBody.Builder builder = HTTPMultiPartBody.builder()
+          .addPart("payload_json", new MultiPartRecord.Content.StringContent(json));
+      for (int i = 0; i < attachments.size(); i++) {
+        final FileAttachment fileAttachment = attachments.get(i);
+        builder.addPart("files[" + i + "]", fileAttachment.filename(), new MultiPartRecord.Content.FileContent(fileAttachment.file()));
+      }
+      final HTTPMultiPartBody multiPartBody = builder.build();
+      requestBuilder.header("Content-Type", multiPartBody.contentType())
+        .POST(HttpRequest.BodyPublishers.ofByteArray(multiPartBody.bytes()));
+    } else {
+      requestBuilder.header("Content-Type", "application/json")
+        .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8));
+    }
 
     System.out.println("JSON: " + json);
 
-    return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    return this.httpClient.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
   }
 
   private URI encodeURL(final @Nullable QueryParameters queryParameters) {

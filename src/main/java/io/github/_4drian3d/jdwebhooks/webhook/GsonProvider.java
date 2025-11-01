@@ -5,7 +5,9 @@ import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
 import io.github._4drian3d.jdwebhooks.component.*;
 import io.github._4drian3d.jdwebhooks.serializer.*;
 
+import java.nio.file.Path;
 import java.time.*;
+import java.util.List;
 
 public final class GsonProvider {
   public static Gson provide() {
@@ -21,6 +23,7 @@ public final class GsonProvider {
   }
 
   public static void main(String[] args) {
+    // Yeah, I known that this is "secret", but I'll delete later
     final WebHookClient client = WebHookClient.builder()
         .credentials("1195923086558646342", "Ss_HWj6j3UHfpn5TlASLlnS7ZvclwQipq0JNv92JACvPozCoMwELXN8jh1qw9UnNJUXL")
         .agent("JDWebHooks Testing xd")
@@ -29,19 +32,29 @@ public final class GsonProvider {
     final WebHook webHook = WebHook.builder()
         .username("Ola")
         .components(
-            Component.textDisplay().content("Contenido xd").build(),
-            Component.separator().spacing(SeparatorComponent.Spacing.LARGE).divider(true).build(),
-            Component.container().accentColor(0xFF0000).spoiler(true)
+            Component.textDisplay()
+                .content("Contenido xd")
+                .build(),
+            Component.separator()
+                .spacing(SeparatorComponent.Spacing.LARGE)
+                .divider(true)
+                .build(),
+            Component.file().file("build.gradle.kts").build(),
+            Component.container()
+                .accentColor(0xFF0000)
                 .components(
                     Component.textDisplay().content("Contenido en container").build(),
                     Component.mediaGallery().items(MediaGalleryComponent.itemBuilder()
                         .media("https://avatars.githubusercontent.com/u/68704415?v=4").build()).build()
 
                 ).build()
-//            Component.file().id(5)
-//                .file(URI.create("https://raw.githubusercontent.com/MiniPlaceholders/miniplaceholders.github.io/refs/heads/main/static/img/MiniPlaceholdersLogoMin.svg"))
-//                .build()
         )
+        .fileAttachments(List.of(
+            FileAttachment.builder()
+                .filename("build.gradle.kts")
+                .file(Path.of("build.gradle.kts"))
+                .build()
+        ))
         .build();
 
     client.sendWebHook(webHook)
