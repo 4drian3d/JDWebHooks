@@ -2,6 +2,7 @@ package io.github._4drian3d.jdwebhooks.webhook;
 
 import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
 import io.github._4drian3d.jdwebhooks.component.Component;
+import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -30,6 +31,9 @@ public sealed interface WebHook permits WebHookImpl {
 
   @NonNull
   List<Component> components();
+
+  @Nullable
+  List<FileAttachment> fileAttachments();
 
   @Nullable
   Boolean suppressNotifications();
@@ -78,25 +82,10 @@ public sealed interface WebHook permits WebHookImpl {
 
     Builder components(Component... components);
 
+    Builder fileAttachments(List<FileAttachment> fileAttachments);
+
     Builder suppressNotifications(final @Nullable Boolean suppressNotifications);
 
     WebHook build();
   }
-
-
-  /*
-   * Sets the ID of an existing thread to send the message in.
-   *
-   * @param threadId The "thread_id" query parameter
-   * @return this builder
-   * @see <a href=https://discord.com/developers/docs/resources/webhook#execute-webhook-query-string-params>Execute Webhook Query String Params</a>
-   */
-
-  /*
-   * Sets whether the response should wait for the message to be created.
-   *
-   * @param waitForMessage the "wait" query parameter
-   * @return this builder
-   * @see <a href=https://discord.com/developers/docs/resources/webhook#execute-webhook-query-string-params>Execute Webhook Query String Params</a>
-   */
 }

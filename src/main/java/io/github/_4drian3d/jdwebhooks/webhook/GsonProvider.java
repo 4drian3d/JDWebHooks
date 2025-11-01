@@ -8,15 +8,51 @@ import io.github._4drian3d.jdwebhooks.serializer.*;
 import java.time.*;
 
 public final class GsonProvider {
-    public static Gson provide() {
-        final var componentSerializer = new ComponentSerializer();
+  public static Gson provide() {
+    final var componentSerializer = new ComponentSerializer();
 
-        return new GsonBuilder()
-                .registerTypeAdapter(OffsetDateTime.class, new DateSerializer())
-                .registerTypeAdapter(WebHookImpl.class, new WebHookSerializer())
-                .registerTypeAdapter(AllowedMentions.class, new AllowedMentionsSerializer())
-                .registerTypeHierarchyAdapter(Component.class, componentSerializer)
-                .registerTypeHierarchyAdapter(MediaGalleryComponent.Item.class, new MediaGalleryItemSerializer())
-                .create();
-    }
+    return new GsonBuilder()
+        .registerTypeAdapter(OffsetDateTime.class, new DateSerializer())
+        .registerTypeAdapter(WebHookImpl.class, new WebHookSerializer())
+        .registerTypeHierarchyAdapter(AllowedMentions.class, new AllowedMentionsSerializer())
+        .registerTypeHierarchyAdapter(Component.class, componentSerializer)
+        .registerTypeHierarchyAdapter(MediaGalleryComponent.Item.class, new MediaGalleryItemSerializer())
+        .create();
+  }
+
+  public static void main(String[] args) {
+    final WebHookClient client = WebHookClient.builder()
+        .credentials("1195923086558646342", "Ss_HWj6j3UHfpn5TlASLlnS7ZvclwQipq0JNv92JACvPozCoMwELXN8jh1qw9UnNJUXL")
+        .agent("JDWebHooks Testing xd")
+        .build();
+
+    final WebHook webHook = WebHook.builder()
+        .username("Ola")
+        .components(
+            Component.textDisplay().content("Contenido xd").build(),
+            Component.separator().spacing(SeparatorComponent.Spacing.LARGE).divider(true).build(),
+            Component.container().accentColor(0xFF0000).spoiler(true)
+                .components(
+                    Component.textDisplay().content("Contenido en container").build(),
+                    Component.mediaGallery().items(MediaGalleryComponent.itemBuilder()
+                        .media("https://avatars.githubusercontent.com/u/68704415?v=4").build()).build()
+
+                ).build()
+//            Component.file().id(5)
+//                .file(URI.create("https://raw.githubusercontent.com/MiniPlaceholders/miniplaceholders.github.io/refs/heads/main/static/img/MiniPlaceholdersLogoMin.svg"))
+//                .build()
+        )
+        .build();
+
+    client.sendWebHook(webHook)
+        .handle((stringHttpResponse, throwable) -> {
+          System.out.println("Throwable: " + throwable);
+          System.out.println("Response Code: " + stringHttpResponse.statusCode());
+          System.out.println("Response Body: " + stringHttpResponse.body());
+          System.out.println("Response Headers: " + stringHttpResponse.headers().toString());
+          System.out.println("Response Request: " + stringHttpResponse.request().toString());
+          System.out.println("Response Body publisher: " + stringHttpResponse.request().bodyPublisher().orElseThrow().toString());
+          return null;
+        }).join();
+  }
 }

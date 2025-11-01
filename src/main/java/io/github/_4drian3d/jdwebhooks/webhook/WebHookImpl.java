@@ -1,7 +1,9 @@
 package io.github._4drian3d.jdwebhooks.webhook;
 
+import io.github._4drian3d.jdwebhooks.component.FileComponent;
 import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
 import io.github._4drian3d.jdwebhooks.component.Component;
+import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -27,7 +29,8 @@ record WebHookImpl(
     @Nullable Boolean tts,
     @Nullable AllowedMentions allowedMentions,
     @Nullable String threadName,
-    @Nullable List<Component> components,
+    @NonNull List<Component> components,
+    @Nullable List<FileAttachment> fileAttachments,
     @Nullable Boolean suppressNotifications
 ) implements WebHook {
 
@@ -38,7 +41,8 @@ record WebHookImpl(
     private Boolean tts;
     private AllowedMentions allowedMentions;
     private String threadName;
-    private List<Component> components;
+    private final List<Component> components = new ArrayList<>();
+    private List<FileAttachment> fileAttachments;
     private Boolean suppressNotifications;
 
     @Override
@@ -87,9 +91,6 @@ record WebHookImpl(
     @NonNull
     public Builder component(final @NonNull Component component) {
       requireNonNull(component);
-      if (this.components == null) {
-        this.components = new ArrayList<>();
-      }
       this.components.add(component);
       return this;
     }
@@ -98,9 +99,7 @@ record WebHookImpl(
     @NonNull
     public Builder components(final @NonNull List<Component> components) {
       requireNonNull(components);
-      for (final Component embed : components) {
-        this.component(embed);
-      }
+      this.components.addAll(components);
       return this;
     }
 
@@ -116,6 +115,13 @@ record WebHookImpl(
 
     @Override
     @NonNull
+    public Builder fileAttachments(final @NonNull List<FileAttachment> fileAttachments) {
+      this.fileAttachments = fileAttachments;
+      return this;
+    }
+
+    @Override
+    @NonNull
     public Builder suppressNotifications(final @Nullable Boolean suppressNotifications) {
       this.suppressNotifications = suppressNotifications;
       return this;
@@ -124,9 +130,14 @@ record WebHookImpl(
     @Override
     @NonNull
     public WebHookImpl build() {
-      requireNonNull(this.components, "No component provided");
       if (this.components.isEmpty()) {
-        throw new IllegalArgumentException("Either content, embeds, or components must be provided");
+        throw new IllegalArgumentException("No component provided");
+      }
+      for (Component component : List.copyOf(components)) {
+        if (component instanceof FileComponent) {
+          this.validateFileAttachments(components, fileAttachments);
+          break;
+        }
       }
       return new WebHookImpl(
           this.queryParameters,
@@ -136,8 +147,38 @@ record WebHookImpl(
           this.allowedMentions,
           this.threadName,
           this.components,
+          this.fileAttachments,
           this.suppressNotifications
       );
+    }
+
+    private void validateFileAttachments(List<Component> componentList, List<FileAttachment> fileAttachments) {
+      if (fileAttachments == null || fileAttachments.isEmpty()) {
+        throw new IllegalArgumentException("You need to provide file attachments");
+      }
+
+      final List<String> fileComponentsNames = new ArrayList<>();
+      final List<String> fileAttachmentNames = new ArrayList<>();
+
+      for (Component component : componentList) {
+        if (component instanceof FileComponent fileComponent) {
+          fileComponentsNames.add(fileComponent.file().replace("attachment://", ""));
+        }
+      }
+      for (FileAttachment fileAttachment : fileAttachments) {
+        fileAttachmentNames.add(fileAttachment.filename());
+      }
+      // Multiple components can reference the same file.
+      // However, there cannot be more attachments than file components created.
+      if (fileAttachmentNames.size() > fileComponentsNames.size()) {
+        throw new IllegalArgumentException("Cannot be more file attachments than file components");
+      }
+
+      for (String fileComponentsName : fileComponentsNames) {
+        if (!fileAttachmentNames.contains(fileComponentsName)) {
+          throw new IllegalArgumentException("No file attachment has been provided for the file component " + fileComponentsName);
+        }
+      }
     }
   }
 }

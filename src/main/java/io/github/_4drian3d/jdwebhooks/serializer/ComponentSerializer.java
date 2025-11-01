@@ -43,7 +43,6 @@ public class ComponentSerializer implements JsonSerializer<Component> {
             object.add("items", context.serialize(mediaGallery.items()));
           case FileComponent file -> {
             final var fileObject = new JsonObject();
-            // TODO: URL validation
             fileObject.addProperty("url", file.file());
             object.add("file", fileObject);
 

@@ -1,6 +1,7 @@
 package io.github._4drian3d.jdwebhooks.webhook;
 
 import com.google.gson.Gson;
+import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -22,12 +23,14 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
   static final String DEFAULT_AGENT = "github/4drian3d/JDWebhooks";
 
   WebHookClientImpl(String webhookURL, String userAgent) {
-    this(webhookURL, userAgent, GsonProvider.provide(), HttpClient.newHttpClient());
+    this(webhookURL, userAgent, GsonProvider.provide(), HttpClient.newBuilder()
+        .executor(Executors.newVirtualThreadPerTaskExecutor()).build());
   }
 
   @Override
   public CompletableFuture<HttpResponse<String>> sendWebHook(final @NonNull WebHook webHook) {
     requireNonNull(webHook, "webhook");
+
     final String json = gson.toJson(webHook);
 
     return sendRequest(json, webHook.queryParameters());

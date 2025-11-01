@@ -16,7 +16,7 @@ record FileComponentImpl(
 ) implements FileComponent {
 
   FileComponentImpl(final @Nullable Integer id, final String file, final @Nullable Boolean spoiler) {
-    this(id, ComponentType.FILE, file.startsWith("attachment://") ? file : "attachment://" + file, spoiler);
+    this(id, ComponentType.FILE, file, spoiler);
   }
 
   @NullUnmarked
@@ -39,6 +39,9 @@ record FileComponentImpl(
     @Override
     public FileComponentImpl build() {
       requireNonNull(file, "file");
+      if (!file.startsWith("attachment://")) {
+        file = "attachment://" + file;
+      }
       return new FileComponentImpl(id, file, spoiler);
     }
   }

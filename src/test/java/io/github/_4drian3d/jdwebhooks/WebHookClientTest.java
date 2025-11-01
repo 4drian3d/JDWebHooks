@@ -2,6 +2,7 @@ package io.github._4drian3d.jdwebhooks;
 
 import com.google.gson.JsonParser;
 import io.github._4drian3d.jdwebhooks.component.*;
+import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import io.github._4drian3d.jdwebhooks.webhook.*;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -46,7 +47,7 @@ class WebHookClientTest {
     final WebHook webHook = WebHook.builder()
         .username(username)
         .component(Component.textDisplay().content(content).build())
-        .queryParameters(new QueryParameters(true, null))
+        .queryParameters(QueryParameters.builder().waitForMessage(true).build())
         .build();
 
     final var response = client.sendWebHook(webHook).join();
@@ -95,7 +96,7 @@ class WebHookClientTest {
     final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
     for (int i = 1; i <= 9; i++) {
       final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-      final var mediaItem = MediaGalleryComponent.Item.builder().media(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+      final var mediaItem = MediaGalleryComponent.itemBuilder().media(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
       mediaItems.add(mediaItem);
     }
 
@@ -129,7 +130,7 @@ class WebHookClientTest {
     final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
     for (int i = 1; i <= 9; i++) {
       final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-      final var mediaItem = MediaGalleryComponent.Item.builder().media(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+      final var mediaItem = MediaGalleryComponent.itemBuilder().media(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
       mediaItems.add(mediaItem);
     }
     final var mediaComponent = Component.mediaGallery().items(mediaItems).build();

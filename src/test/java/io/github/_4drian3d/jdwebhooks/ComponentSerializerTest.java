@@ -83,7 +83,7 @@ public class ComponentSerializerTest {
         final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
         for (int i = 1; i <= 9; i++) {
             final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-            final var mediaItem = MediaGalleryComponent.Item.builder().media(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            final var mediaItem = MediaGalleryComponent.itemBuilder().media(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
             mediaItems.add(mediaItem);
         }
 
@@ -134,7 +134,7 @@ public class ComponentSerializerTest {
         final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
         for (int i = 1; i <= 9; i++) {
             final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-            final var mediaItem = MediaGalleryComponent.Item.builder().media(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+            final var mediaItem = MediaGalleryComponent.itemBuilder().media(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
             mediaItems.add(mediaItem);
         }
         final var mediaComponent = Component.mediaGallery().items(mediaItems).build();

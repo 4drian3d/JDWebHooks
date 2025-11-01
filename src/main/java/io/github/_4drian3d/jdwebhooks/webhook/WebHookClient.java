@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import static io.github._4drian3d.jdwebhooks.webhook.WebHookClientImpl.DEFAULT_AGENT;
 
 @NullMarked
-public interface WebHookClient {
+public sealed interface WebHookClient permits WebHookClientImpl {
   /**
    * Sends the specified WebHookImpl.
    *
@@ -56,7 +56,7 @@ public interface WebHookClient {
   /**
    * Builder for the creation of a new WebHookClientImpl.
    */
-  interface Builder {
+  sealed interface Builder permits WebHookClientImpl.Builder {
     /**
      * Sets the client URI
      *
