@@ -3,11 +3,9 @@ package io.github._4drian3d.jdwebhooks.http;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +27,7 @@ record HTTPMultiPartBodyImpl(byte[] bytes, String boundary) implements HTTPMulti
     }
 
     public HTTPMultiPartBodyImpl build() {
-      final String boundary = new BigInteger(256, new SecureRandom()).toString();
+      final String boundary = Long.toString(System.currentTimeMillis());
       try (DataOutPut out = new DataOutPut(new ByteArrayOutputStream())) {
         for (final MultiPartRecord record : parts) {
           final StringBuilder stringBuilder = new StringBuilder();
@@ -65,7 +63,7 @@ record HTTPMultiPartBodyImpl(byte[] bytes, String boundary) implements HTTPMulti
 
     private record DataOutPut(ByteArrayOutputStream dataStream) implements AutoCloseable {
 
-      void write(byte[] b) {
+      private void write(byte[] b) {
         try {
           dataStream.write(b);
         } catch (IOException e) {
@@ -73,7 +71,7 @@ record HTTPMultiPartBodyImpl(byte[] bytes, String boundary) implements HTTPMulti
         }
       }
 
-      void copyfrom(Path path) {
+      private void copyfrom(Path path) {
         try {
           Files.copy(path, dataStream);
         } catch (IOException e) {

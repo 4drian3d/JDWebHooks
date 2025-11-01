@@ -21,6 +21,10 @@ public sealed interface Component permits ContainerComponent, FileComponent, Med
     return new TextDisplayComponentImpl.Builder();
   }
 
+  static TextDisplayComponent textDisplay(final String display) {
+    return new TextDisplayComponentImpl(null, display);
+  }
+
   static ThumbnailComponent.Builder thumbnail() {
     return new ThumbnailComponentImpl.Builder();
   }

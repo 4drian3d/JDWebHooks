@@ -3,21 +3,20 @@ package io.github._4drian3d.jdwebhooks.webhook;
 import com.google.gson.*;
 import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
 import io.github._4drian3d.jdwebhooks.component.*;
+import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import io.github._4drian3d.jdwebhooks.serializer.*;
 
+import java.net.URI;
 import java.nio.file.Path;
 import java.time.*;
-import java.util.List;
 
 public final class GsonProvider {
   public static Gson provide() {
-    final var componentSerializer = new ComponentSerializer();
-
     return new GsonBuilder()
         .registerTypeAdapter(OffsetDateTime.class, new DateSerializer())
         .registerTypeAdapter(WebHookImpl.class, new WebHookSerializer())
         .registerTypeHierarchyAdapter(AllowedMentions.class, new AllowedMentionsSerializer())
-        .registerTypeHierarchyAdapter(Component.class, componentSerializer)
+        .registerTypeHierarchyAdapter(Component.class, new ComponentSerializer())
         .registerTypeHierarchyAdapter(MediaGalleryComponent.Item.class, new MediaGalleryItemSerializer())
         .create();
   }
@@ -29,32 +28,45 @@ public final class GsonProvider {
         .agent("JDWebHooks Testing xd")
         .build();
 
+
+    final FileAttachment fileAttachment = FileAttachment.builder()
+        .file(Path.of("build.gradle.kts")).build();
     final WebHook webHook = WebHook.builder()
-        .username("Ola")
+        .username("4drian3d Super Hiper WebHook")
+        .avatarURL("https://assets.papermc.io/brand/papermc_logo.256.png")
+        .queryParameters(QueryParameters.builder().waitForMessage(true).build())
         .components(
-            Component.textDisplay()
-                .content("Contenido xd")
-                .build(),
-            Component.separator()
-                .spacing(SeparatorComponent.Spacing.LARGE)
-                .divider(true)
-                .build(),
-            Component.file().file("build.gradle.kts").build(),
             Component.container()
                 .accentColor(0xFF0000)
                 .components(
-                    Component.textDisplay().content("Contenido en container").build(),
-                    Component.mediaGallery().items(MediaGalleryComponent.itemBuilder()
-                        .media("https://avatars.githubusercontent.com/u/68704415?v=4").build()).build()
-
+                    Component.section()
+                        .accessory(Component.thumbnail().media(URI.create("https://avatars.githubusercontent.com/u/68704415?v=4")).build())
+                        .components(Component.textDisplay("# Titulo Gigante"))
+                        .build(),
+                    Component.textDisplay("# Titulo"),
+                    Component.separator()
+                        .spacing(SeparatorComponent.Spacing.LARGE)
+                        .divider(true)
+                        .build(),
+                    Component.textDisplay("""
+                        ## Archivo
+                        Esta wea tambien acepta multiline
+                        Yeah"""),
+                    Component.file().file(fileAttachment).build(),
+                    Component.textDisplay().content("* Imagen: ").build(),
+                    Component.mediaGallery()
+                        .items(
+                            MediaGalleryComponent.itemBuilder()
+                                .media(URI.create("https://cdn.modrinth.com/data/sG6SrXta/d887dd162a7b3d9edc85e8b506da96b29f996000_96.webp"))
+                                .build(),
+                            MediaGalleryComponent.itemBuilder()
+                                .media(URI.create("https://wsrv.nl/?url=https%3A%2F%2Fwww.bisecthosting.com%2Fpartners%2Fcustom-banners%2F6fa909d5-ad2b-42c2-a7ec-1c51f8b6384f.webp&n=-1"))
+                                .spoiler(true).build()
+                        )
+                        .build()
                 ).build()
         )
-        .fileAttachments(List.of(
-            FileAttachment.builder()
-                .filename("build.gradle.kts")
-                .file(Path.of("build.gradle.kts"))
-                .build()
-        ))
+        .fileAttachment(fileAttachment)
         .build();
 
     client.sendWebHook(webHook)
@@ -62,9 +74,6 @@ public final class GsonProvider {
           System.out.println("Throwable: " + throwable);
           System.out.println("Response Code: " + stringHttpResponse.statusCode());
           System.out.println("Response Body: " + stringHttpResponse.body());
-          System.out.println("Response Headers: " + stringHttpResponse.headers().toString());
-          System.out.println("Response Request: " + stringHttpResponse.request().toString());
-          System.out.println("Response Body publisher: " + stringHttpResponse.request().bodyPublisher().orElseThrow().toString());
           return null;
         }).join();
   }

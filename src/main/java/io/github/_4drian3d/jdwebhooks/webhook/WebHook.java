@@ -82,7 +82,11 @@ public sealed interface WebHook permits WebHookImpl {
 
     Builder components(Component... components);
 
+    Builder fileAttachment(FileAttachment fileAttachment);
+
     Builder fileAttachments(List<FileAttachment> fileAttachments);
+
+    Builder fileAttachments(FileAttachment... fileAttachments);
 
     Builder suppressNotifications(final @Nullable Boolean suppressNotifications);
 

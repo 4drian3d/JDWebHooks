@@ -1,9 +1,12 @@
 package io.github._4drian3d.jdwebhooks.component;
 
+import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
+
+import java.nio.file.Path;
 
 import static java.util.Objects.requireNonNull;
 
@@ -25,8 +28,14 @@ record FileComponentImpl(
     private Boolean spoiler;
 
     @Override
-    public Builder file(@NonNull final String file) {
-      this.file = file;
+    public Builder file(final @NonNull FileAttachment file) {
+      this.file = file.filename();
+      return this;
+    }
+
+    @Override
+    public FileComponent.Builder file(final @NonNull Path file) {
+      this.file = file.getFileName().toString();
       return this;
     }
 
@@ -39,8 +48,8 @@ record FileComponentImpl(
     @Override
     public FileComponentImpl build() {
       requireNonNull(file, "file");
-      if (!file.startsWith("attachment://")) {
-        file = "attachment://" + file;
+      if (!file.startsWith(FileAttachment.PREFIX)) {
+        file = FileAttachment.PREFIX + file;
       }
       return new FileComponentImpl(id, file, spoiler);
     }

@@ -8,6 +8,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -115,8 +116,28 @@ record WebHookImpl(
 
     @Override
     @NonNull
+    public Builder fileAttachment(final @NonNull FileAttachment fileAttachment) {
+      if (this.fileAttachments == null) {
+        this.fileAttachments = new ArrayList<>();
+      }
+      this.fileAttachments.add(fileAttachment);
+      return this;
+    }
+
+    @Override
+    @NonNull
     public Builder fileAttachments(final @NonNull List<FileAttachment> fileAttachments) {
       this.fileAttachments = fileAttachments;
+      return this;
+    }
+
+    @Override
+    @NonNull
+    public Builder fileAttachments(@NonNull FileAttachment @NonNull... fileAttachments) {
+      if (this.fileAttachments == null) {
+        this.fileAttachments = new ArrayList<>();
+      }
+      Collections.addAll(this.fileAttachments, fileAttachments);
       return this;
     }
 
@@ -162,7 +183,7 @@ record WebHookImpl(
 
       for (Component component : componentList) {
         if (component instanceof FileComponent fileComponent) {
-          fileComponentsNames.add(fileComponent.file().replace("attachment://", ""));
+          fileComponentsNames.add(fileComponent.file().replace(FileAttachment.PREFIX, ""));
         }
       }
       for (FileAttachment fileAttachment : fileAttachments) {

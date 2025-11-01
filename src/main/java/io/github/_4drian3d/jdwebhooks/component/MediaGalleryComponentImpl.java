@@ -1,9 +1,11 @@
 package io.github._4drian3d.jdwebhooks.component;
 
+import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.net.URI;
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
@@ -31,8 +33,17 @@ record MediaGalleryComponentImpl(
 
       @NonNull
       @Override
-      public Builder media(@NonNull final String media) {
-        this.media = media;
+      public Builder media(final @NonNull URI mediaURI) {
+        requireNonNull(mediaURI);
+        this.media = mediaURI.toString();
+        return this;
+      }
+
+      @NonNull
+      @Override
+      public Builder media(final @NonNull FileAttachment fileAttachment) {
+        requireNonNull(fileAttachment);
+        this.media = fileAttachment.filename();
         return this;
       }
 

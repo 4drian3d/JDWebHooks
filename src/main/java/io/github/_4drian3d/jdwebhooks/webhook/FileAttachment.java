@@ -5,6 +5,8 @@ import org.jspecify.annotations.NonNull;
 import java.nio.file.Path;
 
 public sealed interface FileAttachment permits FileAttachmentImpl {
+  String PREFIX = "attachment://";
+
   @NonNull
   Path file();
 
