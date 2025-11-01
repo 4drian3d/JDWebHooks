@@ -18,7 +18,7 @@ import static java.util.Objects.*;
  */
 @SuppressWarnings("unused")
 record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpClient httpClient) implements WebHookClient {
-  static final String BASE_URL = "https://discord.com/api/webhooks/%s/%s";
+  static final String BASE_URL = "https://discord.com/api/webhooks/%s/%s?with_components=true";
   static final String DEFAULT_AGENT = "github/4drian3d/JDWebhooks";
 
   WebHookClientImpl(String webhookURL, String userAgent) {
@@ -41,24 +41,23 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
         .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
         .build();
 
+    System.out.println("JSON: " + json);
+
     return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
   }
 
   private URI encodeURL(final @Nullable QueryParameters queryParameters) {
+    final StringBuilder queryBuilder = new StringBuilder();
     if (queryParameters != null && (queryParameters.waitForMessage() != null || queryParameters.threadId() != null)) {
-      final StringBuilder queryBuilder = new StringBuilder("?");
       if (queryParameters.waitForMessage() != null) {
-        queryBuilder.append('=').append(queryParameters.waitForMessage());
+        queryBuilder.append("&wait=").append(queryParameters.waitForMessage());
       }
       if (queryParameters.threadId() != null) {
-        if (queryParameters.waitForMessage() != null) {
-          queryBuilder.append('&');
-        }
-        queryBuilder.append('=').append(queryParameters.threadId());
+        queryBuilder.append("&thread_id=").append(queryParameters.threadId());
       }
-      return URI.create(BASE_URL + queryBuilder);
+      return URI.create(webhookURL + queryBuilder);
     }
-    return URI.create(BASE_URL);
+    return URI.create(webhookURL);
   }
 
 
