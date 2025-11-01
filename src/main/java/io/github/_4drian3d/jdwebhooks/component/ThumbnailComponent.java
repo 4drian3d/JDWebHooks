@@ -15,9 +15,15 @@ import java.net.URI;
  * <br>
  * Thumbnails currently only support images, including animated formats like GIF and WEBP.
  * Videos are not supported at this time.
+ *
+ * @see FileAttachment
  */
 @NullMarked
 public sealed interface ThumbnailComponent extends Component, AccessoryComponent permits ThumbnailComponentImpl {
+  /**
+   * A url or attachment provided as an unfurled media item
+   * @return an unfurled media item
+   */
   String media();
 
   @Nullable String description();

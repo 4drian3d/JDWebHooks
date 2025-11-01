@@ -7,20 +7,47 @@ import org.jspecify.annotations.Nullable;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * A Media Gallery is a top-level content component that allows you to display 1-10 media attachments
+ * in an organized gallery format. Each item can have optional descriptions and can be marked as spoilers.
+ *
+ * @see Component#mediaGallery()
+ * @see FileAttachment
+ */
 @NullMarked
 public sealed interface MediaGalleryComponent extends Component, ContainerableComponent permits MediaGalleryComponentImpl {
+  /**
+   * 1 to 10 media gallery items
+   * @return media gallery items
+   */
   List<Item> items();
 
   static Item.Builder itemBuilder() {
     return new MediaGalleryComponentImpl.Item.Builder();
   }
 
+  /**
+   * MediaGallery Item
+   * @see MediaGalleryComponent#itemBuilder()
+   */
   sealed interface Item permits MediaGalleryComponentImpl.Item {
+    /**
+     * A url or attachment provided as an unfurled media item
+     * @return an unfurled media item
+     */
     String media();
 
+    /**
+     * Alt text for the media, max 1024 characters
+     * @return Alt text for the media
+     */
     @Nullable
     String description();
 
+    /**
+     * Whether the media should be a spoiler (or blurred out). Defaults to false
+     * @return Whether the media should be a spoiler
+     */
     @Nullable
     Boolean spoiler();
 

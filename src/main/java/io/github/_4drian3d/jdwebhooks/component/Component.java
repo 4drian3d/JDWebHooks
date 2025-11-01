@@ -10,6 +10,10 @@ import org.jspecify.annotations.Nullable;
 public sealed interface Component permits ContainerComponent, FileComponent, MediaGalleryComponent, SectionComponent, SeparatorComponent, TextDisplayComponent, ThumbnailComponent {
   ComponentType componentType();
 
+  /**
+   * Optional identifier for component
+   * @return identifier of this component
+   */
   @Nullable
   Integer id();
 

@@ -5,6 +5,11 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * A Container is a top-level layout component.
+ * <br>
+ * Containers offer the ability to visually encapsulate a collection of components and have an optional customizable accent color bar.
+ */
 public sealed interface ContainerComponent extends Component permits ContainerComponentImpl {
   @NonNull
   List<ContainerableComponent> components();
