@@ -16,14 +16,12 @@ dependencies {
     compileOnlyApi(libs.annotations.jspecify)
     implementation(libs.gson)
 
-    // JUnit
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0")
-    testImplementation("org.junit.platform:junit-platform-launcher:1.11.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.junit.platform)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
-    // JsonUnit
-    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:4.1.1")
+    testImplementation(libs.jsonassert)
 }
 
 tasks {
