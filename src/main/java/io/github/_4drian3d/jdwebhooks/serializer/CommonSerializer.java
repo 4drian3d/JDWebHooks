@@ -1,13 +1,13 @@
 package io.github._4drian3d.jdwebhooks.serializer;
 
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-sealed interface CommonSerializer permits EmbedSerializer, WebHookSerializer, AllowedMentionsSerializer {
+sealed interface CommonSerializer permits WebHookSerializer, AllowedMentionsSerializer {
     default void addNonNull(
-            final @NotNull JsonObject object,
-            final @NotNull String name,
+            final @NonNull JsonObject object,
+            final @NonNull String name,
             final @Nullable Object value
     ) {
         if (value != null) {
@@ -16,8 +16,8 @@ sealed interface CommonSerializer permits EmbedSerializer, WebHookSerializer, Al
     }
 
     default void addNonNull(
-            final @NotNull JsonObject object,
-            final @NotNull String name,
+            final @NonNull JsonObject object,
+            final @NonNull String name,
             final @Nullable Number value
     ) {
         if (value != null) {
@@ -26,8 +26,8 @@ sealed interface CommonSerializer permits EmbedSerializer, WebHookSerializer, Al
     }
 
     default void addNonNull(
-            final @NotNull JsonObject object,
-            final @NotNull String name,
+            final @NonNull JsonObject object,
+            final @NonNull String name,
             final @Nullable Boolean value
     ) {
         if (value != null) {

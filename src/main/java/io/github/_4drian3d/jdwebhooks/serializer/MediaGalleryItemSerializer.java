@@ -11,7 +11,7 @@ public class MediaGalleryItemSerializer implements JsonSerializer<MediaGalleryCo
         final var object = new JsonObject();
 
         final var mediaObject = new JsonObject();
-        mediaObject.addProperty("url", src.media());
+        mediaObject.addProperty("url", src.media().mediaReference());
         object.add("media", mediaObject);
 
         final var description = src.description();

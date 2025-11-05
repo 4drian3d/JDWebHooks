@@ -1,51 +1,31 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import org.jetbrains.annotations.*;
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-public final class FileComponent extends Component implements ContainerableComponent {
-    @NotNull
-    private final String file;
-    private final Boolean spoiler;
+import java.nio.file.Path;
 
-    FileComponent(final int id, @NotNull final String file, final Boolean spoiler) {
-        super(ComponentType.FILE, id);
-        this.file = "attachment://" + file;
-        this.spoiler = spoiler;
-    }
+/**
+ * A File is a top-level content component that allows you to display an uploaded file
+ * as an attachment to the message and reference it in the component.
+ * Each file component can only display 1 attached file,
+ * but you can upload multiple files and add them to different file components within your payload.
+ *
+ * @see FileAttachment
+ */
+public sealed interface FileComponent extends Component, ContainerableComponent permits FileComponentImpl {
+  @NonNull
+  FileAttachment file();
 
-    @NotNull
-    public String getFile() {
-        return file;
-    }
+  @Nullable
+  Boolean spoiler();
 
-    public Boolean getSpoiler() {
-        return spoiler;
-    }
+  sealed interface Builder extends ComponentBuilder<FileComponent, Builder> permits FileComponentImpl.Builder {
+    Builder file(final @NonNull FileAttachment file);
 
-    public static class Builder extends Component.Builder<Builder> {
-        @NotNull
-        private String file;
-        private Boolean spoiler;
+    Builder file(final @NonNull Path file);
 
-        Builder(@NotNull final String file) {
-            super();
-            this.file = file;
-            this.spoiler = null;
-        }
-
-        public Builder file(@NotNull final String file) {
-            this.file = file;
-            return this;
-        }
-
-        public Builder spoiler(final Boolean spoiler) {
-            this.spoiler = spoiler;
-            return this;
-        }
-
-        @Override
-        public FileComponent build() {
-            return new FileComponent(id, file, spoiler);
-        }
-    }
+    Builder spoiler(final Boolean spoiler);
+  }
 }

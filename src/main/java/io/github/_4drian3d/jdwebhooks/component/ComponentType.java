@@ -4,6 +4,7 @@ package io.github._4drian3d.jdwebhooks.component;
  * The component types as described in the Discord API documentation.
  *
  * @see <a href="https://discord.com/developers/docs/components/reference#component-object-component-types">Component Types</a>
+ * @apiNote JDWebhooks, as it does not provide a Discord bot, can only send non-interactive and static component types.
  */
 public enum ComponentType {
     SECTION(9),

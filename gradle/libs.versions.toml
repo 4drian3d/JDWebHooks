@@ -2,17 +2,16 @@ metadata.format.version = "1.1"
 
 [versions]
 
-indra = "4.0.0"
 gson = "2.13.2"
-annotations = "26.0.2-1"
-okhttp = "5.1.0"
+annotations-jspecify = "1.0.0"
+junit = "5.11.0"
 
 [libraries]
 
-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
+annotations-jspecify = { group = "org.jspecify" , name = "jspecify", version.ref = "annotations-jspecify"}
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
-
-[plugins]
-
-indra = { id = "net.kyori.indra.publishing", version.ref = "indra" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit" }
+junit-platform = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit" }
+junit-jupiter-engine= { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+jsonassert = "net.javacrumbs.json-unit:json-unit-assertj:4.1.1"

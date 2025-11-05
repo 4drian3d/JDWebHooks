@@ -1,50 +1,28 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import org.jetbrains.annotations.*;
+import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
+import org.jspecify.annotations.NullMarked;
 
 /**
- * A Text Display is a top-level content component that allows you to add text to your message formatted with markdown and mention users and roles.
- * This is similar to the content field of a message, but allows you to add multiple text components, controlling the layout of your message.
+ * A Text Display is a content component that allows you to add markdown formatted text,
+ * including mentions (users, roles, etc) and emojis.
+ * <br>
+ * The behavior of this component is extremely similar to the content field of a message,
+ * but allows you to add multiple text components, controlling the layout of your message.
  *
- * @see <a href="https://discord.com/developers/docs/components/reference#text-display">Text Display Component</a>
+ * @apiNote When sent in a message, pingable mentions ({@code @user}, {@code @role}, etc) present in this component
+ *  will ping and send notifications based on the value of the {@link io.github._4drian3d.jdwebhooks.property.AllowedMentions} object
+ *  set in {@link io.github._4drian3d.jdwebhooks.webhook.WebHook.Builder#allowedMentions(AllowedMentions)}.
  */
-public final class TextDisplayComponent extends Component implements ContainerableComponent {
-    @NotNull
-    private final String content;
+@NullMarked
+public sealed interface TextDisplayComponent extends Component, ContainerableComponent permits TextDisplayComponentImpl {
+  /**
+   * Text that will be displayed similar to a message
+   * @return text that will be displayed
+   */
+  String content();
 
-    TextDisplayComponent(final int id, @NotNull final String content) {
-        super(ComponentType.TEXT_DISPLAY, id);
-        this.content = content;
-    }
-
-    @NotNull
-    public String getContent() {
-        return content;
-    }
-
-    public static final class Builder extends Component.Builder<Builder> {
-        @NotNull
-        private String content;
-
-        Builder(@NotNull final String content) {
-            super();
-            this.content = content;
-        }
-
-        /**
-         * Sets the text content for this text display component.
-         *
-         * @param content the text content
-         * @return this builder
-         */
-        public Builder content(@NotNull final String content) {
-            this.content = content;
-            return this;
-        }
-
-        @Override
-        public TextDisplayComponent build() {
-            return new TextDisplayComponent(id, content);
-        }
-    }
+  sealed interface Builder extends ComponentBuilder<TextDisplayComponent, Builder> permits TextDisplayComponentImpl.Builder {
+    Builder content(String content);
+  }
 }

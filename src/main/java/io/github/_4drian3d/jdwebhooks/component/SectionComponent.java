@@ -1,75 +1,40 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.NullMarked;
 
-import java.util.*;
+import java.util.List;
 
-import static java.util.Objects.*;
+/**
+ * A Section is a top-level layout component that allows you to contextually associate content with an {@link AccessoryComponent}.
+ * The typical use-case is to contextually associate text content with an accessory.
+ *
+ * @see Component#section()
+ * @see TextDisplayComponent
+ * @see AccessoryComponent
+ * @see ThumbnailComponent
+ */
+@NullMarked
+public sealed interface SectionComponent extends Component, ContainerableComponent permits SectionComponentImpl {
 
-public final class SectionComponent extends Component implements ContainerableComponent {
-    @NotNull
-    private final List<@NotNull TextDisplayComponent> components;
-    @NotNull
-    private final AccessoryComponent accessory;
+  /**
+   * One to three child components representing the content of the section that is contextually associated to the accessor
+   * @return content of the section
+   */
+  List<TextDisplayComponent> components();
 
-    SectionComponent(final int id, @NotNull final List<@NotNull TextDisplayComponent> components, @NotNull final AccessoryComponent accessory) {
-        super(ComponentType.SECTION, id);
+  /**
+   * A component that is contextually associated to the content of the section
+   * @return the accessory component
+   */
+  AccessoryComponent accessory();
 
-        if (components.isEmpty() || components.size() > 3) {
-            throw new IllegalArgumentException("Section component must have between 1 and 3 text display components.");
-        }
-        this.components = List.copyOf(components);
-        this.accessory = accessory;
-    }
+  sealed interface Builder extends ComponentBuilder<SectionComponent, Builder> permits SectionComponentImpl.Builder {
+    Builder component(final TextDisplayComponent component);
 
-    @NotNull
-    public List<@NotNull TextDisplayComponent> getComponents() {
-        return components;
-    }
+    Builder components(final TextDisplayComponent... components);
 
-    @NotNull
-    public AccessoryComponent getAccessory() {
-        return accessory;
-    }
+    Builder components(final List<TextDisplayComponent> components);
 
-    @SuppressWarnings("unused")
-    public static final class Builder extends Component.Builder<Builder> {
-        @NotNull
-        private final List<@NotNull TextDisplayComponent> components;
-        private AccessoryComponent accessory;
-
-        Builder() {
-            super();
-            this.components = new ArrayList<>();
-        }
-
-        public Builder component(@NotNull final TextDisplayComponent component) {
-            this.components.add(component);
-            return this;
-        }
-
-        public Builder components(@NotNull final TextDisplayComponent... components) {
-            this.components.clear();
-            Collections.addAll(this.components, components);
-            return this;
-        }
-
-        public Builder components(@NotNull final List<@NotNull TextDisplayComponent> components) {
-            this.components.clear();
-            this.components.addAll(components);
-            return this;
-        }
-
-        public Builder accessory(@NotNull final AccessoryComponent accessory) {
-            this.accessory = accessory;
-            return this;
-        }
-
-
-        @Override
-        public SectionComponent build() {
-            requireNonNull(accessory, "Accessory component must be provided.");
-            return new SectionComponent(id, components, accessory);
-        }
-    }
+    Builder accessory(final AccessoryComponent accessory);
+  }
 }
