@@ -1,9 +1,11 @@
 package io.github._4drian3d.jdwebhooks.webhook;
 
 import com.google.gson.Gson;
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import io.github._4drian3d.jdwebhooks.http.HTTPMultiPartBody;
 import io.github._4drian3d.jdwebhooks.http.MultiPartRecord;
 import io.github._4drian3d.jdwebhooks.property.QueryParameters;
+import io.github._4drian3d.jdwebhooks.serializer.GsonProvider;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -57,8 +59,6 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
         .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8));
     }
 
-    System.out.println("JSON: " + json);
-
     return this.httpClient.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
   }
 
@@ -81,10 +81,8 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
     private String uri;
     private String agent;
 
-    Builder() {
-    }
-
     @Override
+    @NonNull
     public Builder uri(final @NonNull String uri) {
       requireNonNull(uri, "uri");
       try {
@@ -97,6 +95,7 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
     }
 
     @Override
+    @NonNull
     public Builder credentials(final @NonNull String id, final @NonNull String token) {
       requireNonNull(id, "id");
       requireNonNull(token, "token");
@@ -105,6 +104,7 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
     }
 
     @Override
+    @NonNull
     public Builder agent(final @NonNull String agent) {
       requireNonNull(agent, "agent");
       this.agent = agent;
@@ -112,6 +112,7 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
     }
 
     @Override
+    @NonNull
     public WebHookClientImpl build() {
       requireNonNull(uri, "uri");
       requireNonNull(agent, "agent");

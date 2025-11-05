@@ -1,5 +1,6 @@
 package io.github._4drian3d.jdwebhooks.webhook;
 
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
 import io.github._4drian3d.jdwebhooks.component.Component;
 import io.github._4drian3d.jdwebhooks.property.QueryParameters;
@@ -7,6 +8,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.net.URI;
 import java.util.List;
 
 public sealed interface WebHook permits WebHookImpl {
@@ -18,7 +20,7 @@ public sealed interface WebHook permits WebHookImpl {
   String username();
 
   @Nullable
-  String avatarURL();
+  URI avatarURL();
 
   @Nullable
   Boolean tts();
@@ -69,6 +71,14 @@ public sealed interface WebHook permits WebHookImpl {
      * @return this builder
      */
     Builder avatarURL(final @Nullable String avatarURL);
+
+    /**
+     * Sets the Avatar URL of this WebHookImpl
+     *
+     * @param avatarURL the Avatar URL
+     * @return this builder
+     */
+    Builder avatarURL(final @Nullable URI avatarURL);
 
     Builder tts(final @Nullable Boolean tts);
 

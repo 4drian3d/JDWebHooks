@@ -1,6 +1,6 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.NullUnmarked;
@@ -14,28 +14,28 @@ import static java.util.Objects.requireNonNull;
 record FileComponentImpl(
     @Nullable Integer id,
     ComponentType componentType,
-    String file,
+    FileAttachment file,
     @Nullable Boolean spoiler
 ) implements FileComponent {
 
-  FileComponentImpl(final @Nullable Integer id, final String file, final @Nullable Boolean spoiler) {
+  FileComponentImpl(final @Nullable Integer id, final FileAttachment file, final @Nullable Boolean spoiler) {
     this(id, ComponentType.FILE, file, spoiler);
   }
 
   @NullUnmarked
   static final class Builder extends AbstractComponentBuilder<FileComponent, FileComponent.Builder> implements FileComponent.Builder {
-    private String file;
+    private FileAttachment file;
     private Boolean spoiler;
 
     @Override
     public Builder file(final @NonNull FileAttachment file) {
-      this.file = file.filename();
+      this.file = file;
       return this;
     }
 
     @Override
     public FileComponent.Builder file(final @NonNull Path file) {
-      this.file = file.getFileName().toString();
+      this.file = FileAttachment.fromFile(file);
       return this;
     }
 
@@ -48,9 +48,6 @@ record FileComponentImpl(
     @Override
     public FileComponentImpl build() {
       requireNonNull(file, "file");
-      if (!file.startsWith(FileAttachment.PREFIX)) {
-        file = FileAttachment.PREFIX + file;
-      }
       return new FileComponentImpl(id, file, spoiler);
     }
   }

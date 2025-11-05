@@ -11,7 +11,6 @@ public sealed interface QueryParameters permits QueryParametersImpl {
   @Nullable
   Boolean waitForMessage();
 
-
   /**
    * Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived.
    * @return whether to send a message to a specific thread

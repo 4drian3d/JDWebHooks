@@ -1,10 +1,10 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.MediaReference;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -35,7 +35,7 @@ public sealed interface MediaGalleryComponent extends Component, ContainerableCo
      * A url or attachment provided as an unfurled media item
      * @return an unfurled media item
      */
-    String media();
+    MediaReference media();
 
     /**
      * Alt text for the media, max 1024 characters
@@ -52,9 +52,7 @@ public sealed interface MediaGalleryComponent extends Component, ContainerableCo
     Boolean spoiler();
 
     sealed interface Builder permits MediaGalleryComponentImpl.Item.Builder {
-      Builder media(final URI mediaURI);
-
-      Builder media(final FileAttachment fileAttachment);
+      Builder media(final MediaReference mediaReference);
 
       Builder description(final @Nullable String description);
 

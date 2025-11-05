@@ -34,11 +34,18 @@ tasks {
     }
     javadoc {
         options.encoding = Charsets.UTF_8.name()
-        (options as StandardJavadocDocletOptions).links(
-            "https://docs.oracle.com/en/java/javase/21/docs/api/",
-            "https://www.javadocs.dev/com.google.code.gson/gson/${libs.versions.gson.get()}",
-            "https://www.javadocs.dev/org.jspecify/jspecify/${libs.versions.annotations.jspecify.get()}"
-        )
+        (options as StandardJavadocDocletOptions).apply {
+            links(
+                "https://docs.oracle.com/en/java/javase/21/docs/api/",
+                "https://www.javadocs.dev/com.google.code.gson/gson/${libs.versions.gson.get()}",
+                "https://www.javadocs.dev/org.jspecify/jspecify/${libs.versions.annotations.jspecify.get()}"
+            )
+            tags(
+                "apiNote:a:API Note:",
+                "implSpec:a:Implementation Requirements:",
+                "implNote:a:Implementation Note:",
+            )
+        }
     }
     test {
         useJUnitPlatform()

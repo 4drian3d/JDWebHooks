@@ -1,15 +1,19 @@
 package io.github._4drian3d.jdwebhooks;
 
 import com.google.gson.JsonParser;
-import io.github._4drian3d.jdwebhooks.component.*;
+import io.github._4drian3d.jdwebhooks.component.Component;
+import io.github._4drian3d.jdwebhooks.component.MediaGalleryComponent;
+import io.github._4drian3d.jdwebhooks.component.SeparatorComponent;
+import io.github._4drian3d.jdwebhooks.component.TextDisplayComponent;
+import io.github._4drian3d.jdwebhooks.media.URLMediaReference;
 import io.github._4drian3d.jdwebhooks.property.QueryParameters;
-import io.github._4drian3d.jdwebhooks.webhook.*;
+import io.github._4drian3d.jdwebhooks.webhook.WebHook;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookClient;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -80,7 +84,7 @@ class WebHookClientTest {
     }
 
     final var avatarUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-    final var accessory = Component.thumbnail().media(URI.create(avatarUrl)).spoiler(true).description("Hi :)").build();
+    final var accessory = Component.thumbnail().media(URLMediaReference.from(avatarUrl)).spoiler(true).description("Hi :)").build();
 
     final var component = Component.section().components(textComponents).accessory(accessory).build();
     final WebHook webHook = WebHook.builder()
@@ -97,7 +101,7 @@ class WebHookClientTest {
     final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
     for (int i = 1; i <= 9; i++) {
       final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-      final var mediaItem = MediaGalleryComponent.itemBuilder().media(URI.create(imageUrl)).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+      final var mediaItem = MediaGalleryComponent.itemBuilder().media(URLMediaReference.from(imageUrl)).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
       mediaItems.add(mediaItem);
     }
 
@@ -131,7 +135,7 @@ class WebHookClientTest {
     final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
     for (int i = 1; i <= 9; i++) {
       final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-      final var mediaItem = MediaGalleryComponent.itemBuilder().media(URI.create(imageUrl)).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
+      final var mediaItem = MediaGalleryComponent.itemBuilder().media(URLMediaReference.from(imageUrl)).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
       mediaItems.add(mediaItem);
     }
     final var mediaComponent = Component.mediaGallery().items(mediaItems).build();

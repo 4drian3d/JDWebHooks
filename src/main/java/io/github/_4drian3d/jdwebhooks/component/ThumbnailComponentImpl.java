@@ -1,10 +1,8 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.MediaReference;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
-import java.net.URI;
 
 import static java.util.Objects.requireNonNull;
 
@@ -12,33 +10,25 @@ import static java.util.Objects.requireNonNull;
 record ThumbnailComponentImpl(
     @Nullable Integer id,
     ComponentType componentType,
-    String media,
+    MediaReference media,
     @Nullable String description,
     @Nullable Boolean spoiler
 ) implements ThumbnailComponent {
 
-  ThumbnailComponentImpl(final Integer id, @NonNull final String media, final String description, final Boolean spoiler) {
+  ThumbnailComponentImpl(final Integer id, @NonNull final MediaReference media, final String description, final Boolean spoiler) {
     this(id, ComponentType.THUMBNAIL, media, description, spoiler);
   }
 
   static final class Builder extends AbstractComponentBuilder<ThumbnailComponent, ThumbnailComponent.Builder> implements ThumbnailComponent.Builder {
-    private String media;
+    private MediaReference media;
     private String description;
     private Boolean spoiler;
 
     @NonNull
     @Override
-    public Builder media(final @NonNull URI mediaURI) {
-      requireNonNull(mediaURI);
-      this.media = mediaURI.toString();
-      return this;
-    }
-
-    @NonNull
-    @Override
-    public Builder media(final @NonNull FileAttachment fileAttachment) {
-      requireNonNull(fileAttachment);
-      this.media = fileAttachment.filename();
+    public Builder media(final @NonNull MediaReference mediaReference) {
+      requireNonNull(mediaReference);
+      this.media = mediaReference;
       return this;
     }
 

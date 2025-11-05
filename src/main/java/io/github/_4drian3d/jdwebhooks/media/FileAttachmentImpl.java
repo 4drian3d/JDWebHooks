@@ -1,33 +1,42 @@
-package io.github._4drian3d.jdwebhooks.webhook;
+package io.github._4drian3d.jdwebhooks.media;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static java.util.Objects.requireNonNull;
 
-record FileAttachmentImpl(@NonNull Path file, String filename, String description) implements FileAttachment {
+record FileAttachmentImpl(@NonNull Path file, @NonNull String filename, String description) implements FileAttachment {
   static final class Builder implements FileAttachment.Builder {
     private Path file;
     private String filename;
     private String description;
 
-    public Builder file(final Path file) {
+    @NonNull
+    @Override
+    public Builder file(final @NonNull Path file) {
       this.file = file;
       return this;
     }
 
-    public Builder filename(String filename) {
+    @NonNull
+    @Override
+    public Builder filename(@NonNull String filename) {
       this.filename = filename;
       return this;
     }
 
-    public Builder description(String description) {
+    @NonNull
+    @Override
+    public Builder description(final @Nullable String description) {
       this.description = description;
       return this;
     }
 
+    @NonNull
+    @Override
     public FileAttachmentImpl build() {
       requireNonNull(file);
       if (filename == null) {

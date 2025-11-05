@@ -1,7 +1,7 @@
 package io.github._4drian3d.jdwebhooks.serializer;
 
 import com.google.gson.*;
-import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import io.github._4drian3d.jdwebhooks.webhook.WebHook;
 import org.jspecify.annotations.NonNull;
 

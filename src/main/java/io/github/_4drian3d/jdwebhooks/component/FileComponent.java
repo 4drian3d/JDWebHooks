@@ -1,6 +1,6 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -16,7 +16,7 @@ import java.nio.file.Path;
  */
 public sealed interface FileComponent extends Component, ContainerableComponent permits FileComponentImpl {
   @NonNull
-  String file();
+  FileAttachment file();
 
   @Nullable
   Boolean spoiler();

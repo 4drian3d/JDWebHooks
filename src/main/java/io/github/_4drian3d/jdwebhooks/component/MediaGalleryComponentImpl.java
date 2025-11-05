@@ -1,12 +1,13 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.MediaReference;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
@@ -25,25 +26,17 @@ record MediaGalleryComponentImpl(
     return new Item.Builder();
   }
 
-  record Item(@NonNull String media, String description, Boolean spoiler) implements MediaGalleryComponent.Item {
+  record Item(@NonNull MediaReference media, String description, Boolean spoiler) implements MediaGalleryComponent.Item {
     public static final class Builder implements MediaGalleryComponent.Item.Builder {
-      private String media;
+      private MediaReference media;
       private String description;
       private Boolean spoiler;
 
       @NonNull
       @Override
-      public Builder media(final @NonNull URI mediaURI) {
-        requireNonNull(mediaURI);
-        this.media = mediaURI.toString();
-        return this;
-      }
-
-      @NonNull
-      @Override
-      public Builder media(final @NonNull FileAttachment fileAttachment) {
-        requireNonNull(fileAttachment);
-        this.media = fileAttachment.filename();
+      public Builder media(final @NonNull MediaReference mediaReference) {
+        requireNonNull(mediaReference);
+        this.media = mediaReference;
         return this;
       }
 

@@ -1,10 +1,9 @@
 package io.github._4drian3d.jdwebhooks.component;
 
-import io.github._4drian3d.jdwebhooks.webhook.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
+import io.github._4drian3d.jdwebhooks.media.MediaReference;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
-import java.net.URI;
 
 /**
  * A Thumbnail is a content component that displays visual media in a small form-factor.
@@ -24,16 +23,14 @@ public sealed interface ThumbnailComponent extends Component, AccessoryComponent
    * A url or attachment provided as an unfurled media item
    * @return an unfurled media item
    */
-  String media();
+  MediaReference media();
 
   @Nullable String description();
 
   @Nullable Boolean spoiler();
 
   sealed interface Builder extends ComponentBuilder<ThumbnailComponent, Builder> permits ThumbnailComponentImpl.Builder {
-    Builder media(final URI mediaURI);
-
-    Builder media(final FileAttachment fileAttachment);
+    Builder media(final MediaReference mediaReference);
 
     Builder description(final @Nullable String description);
 

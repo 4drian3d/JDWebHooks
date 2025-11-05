@@ -26,7 +26,7 @@ public class ComponentSerializer implements JsonSerializer<Component> {
           }
           case ThumbnailComponent thumbnail -> {
             final var mediaObject = new JsonObject();
-            mediaObject.addProperty("url", thumbnail.media());
+            mediaObject.addProperty("url", thumbnail.media().mediaReference());
             object.add("media", mediaObject);
 
             final var description = thumbnail.description();
@@ -43,7 +43,7 @@ public class ComponentSerializer implements JsonSerializer<Component> {
             object.add("items", context.serialize(mediaGallery.items()));
           case FileComponent file -> {
             final var fileObject = new JsonObject();
-            fileObject.addProperty("url", file.file());
+            fileObject.addProperty("url", file.file().mediaReference());
             object.add("file", fileObject);
 
             final var spoiler = file.spoiler();

@@ -1,12 +1,14 @@
 package io.github._4drian3d.jdwebhooks.webhook;
 
 import io.github._4drian3d.jdwebhooks.component.FileComponent;
+import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
 import io.github._4drian3d.jdwebhooks.component.Component;
 import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 record WebHookImpl(
     @Nullable QueryParameters queryParameters,
     @Nullable String username,
-    @Nullable String avatarURL,
+    @Nullable URI avatarURL,
     @Nullable Boolean tts,
     @Nullable AllowedMentions allowedMentions,
     @Nullable String threadName,
@@ -38,7 +40,7 @@ record WebHookImpl(
   static final class Builder implements WebHook.Builder {
     private QueryParameters queryParameters;
     private String username;
-    private String avatarURL;
+    private URI avatarURL;
     private Boolean tts;
     private AllowedMentions allowedMentions;
     private String threadName;
@@ -62,9 +64,19 @@ record WebHookImpl(
 
     @Override
     @NonNull
-    public Builder avatarURL(final String avatarURL) {
+    public Builder avatarURL(final @Nullable URI avatarURL) {
       this.avatarURL = avatarURL;
       return this;
+    }
+
+    @Override
+    @NonNull
+    public Builder avatarURL(final @Nullable String avatarURL) {
+      if (avatarURL == null) {
+        this.avatarURL = null;
+        return this;
+      }
+      return this.avatarURL(URI.create(avatarURL));
     }
 
     @Override
@@ -183,7 +195,7 @@ record WebHookImpl(
 
       for (Component component : componentList) {
         if (component instanceof FileComponent fileComponent) {
-          fileComponentsNames.add(fileComponent.file().replace(FileAttachment.PREFIX, ""));
+          fileComponentsNames.add(fileComponent.file().filename());
         }
       }
       for (FileAttachment fileAttachment : fileAttachments) {
