@@ -83,8 +83,11 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
 
     @Override
     @NonNull
-    public Builder uri(final @NonNull String uri) {
+    public Builder uri(@NonNull String uri) {
       requireNonNull(uri, "uri");
+      if (!uri.contains("?with_components=true")) {
+        uri += "?with_components=true";
+      }
       try {
         new URI(uri);
         this.uri = uri;

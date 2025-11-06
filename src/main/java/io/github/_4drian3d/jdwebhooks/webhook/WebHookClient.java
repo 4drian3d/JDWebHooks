@@ -25,7 +25,10 @@ public sealed interface WebHookClient permits WebHookClientImpl {
    * @return a new WebHookClientImpl
    * @throws IllegalArgumentException if the provided URL is invalid
    */
-  static WebHookClient fromURL(final String uri) {
+  static WebHookClient fromURL(String uri) {
+    if (!uri.contains("?with_components=true")) {
+      uri += "?with_components=true";
+    }
     return builder().uri(uri).agent(DEFAULT_AGENT).build();
   }
 
