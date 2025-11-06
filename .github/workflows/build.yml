@@ -22,7 +22,7 @@ jobs:
         with:
           timeout_minutes: 4
           max_attempts: 2
-          command: gradle build -x test
+          command: ./gradlew build -x test
 
       - name: Upload JAR Artifacts
         uses: actions/upload-artifact@v5
