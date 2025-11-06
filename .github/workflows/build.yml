@@ -23,10 +23,3 @@ jobs:
           timeout_minutes: 4
           max_attempts: 2
           command: ./gradlew build -x test
-
-      - name: Upload JAR Artifacts
-        uses: actions/upload-artifact@v5
-        with:
-          name: built-jars
-          path: |
-            **/build/libs/*.jar

@@ -23,6 +23,6 @@ jobs:
         with:
           timeout_minutes: 4
           max_attempts: 2
-          command: ./gradlew test
+          command: ./gradlew test -i
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
