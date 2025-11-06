@@ -11,8 +11,8 @@ import io.github._4drian3d.jdwebhooks.webhook.WebHook;
 import io.github._4drian3d.jdwebhooks.webhook.WebHookClient;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -20,7 +20,10 @@ import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
+@EnabledIfEnvironmentVariable(
+    named = "DISCORD_WEBHOOK_URL",
+    matches = "^https:\\/\\/discord\\.com\\/api\\/webhooks\\/\\d{17,20}\\/[a-zA-Z0-9_-]+$"
+)
 class WebHookClientTest {
   static WebHookClient client;
 
