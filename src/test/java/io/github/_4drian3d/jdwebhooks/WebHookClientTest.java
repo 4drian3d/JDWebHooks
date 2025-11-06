@@ -10,6 +10,7 @@ import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import io.github._4drian3d.jdwebhooks.webhook.WebHook;
 import io.github._4drian3d.jdwebhooks.webhook.WebHookClient;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
+import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.junit.jupiter.api.Assertions.*;
 
 @EnabledIfEnvironmentVariable(
@@ -29,7 +31,10 @@ class WebHookClientTest {
 
   @BeforeAll
   static void beforeAll() {
-    client = WebHookClient.fromURL(System.getenv("DISCORD_WEBHOOK_URL"));
+    client = WebHookClient.builder()
+        .uri(System.getenv("DISCORD_WEBHOOK_URL"))
+        .agent("JDWebHooks by 4drian3d | JUnit Testing")
+        .build();
   }
 
   @Test
@@ -63,7 +68,13 @@ class WebHookClientTest {
 
     final var jsonBody = JsonParser.parseString(response.body());
     assertTrue(jsonBody.isJsonObject());
-    JsonAssertions.assertThatJson(jsonBody).inPath("$.content").isEqualTo(content);
+    JsonAssertions.assertThatJson(jsonBody)
+        .when(Option.IGNORING_ARRAY_ORDER)
+        .inPath("$.components")
+        .isArray()
+        .contains(json("""
+            {"type":10,"id":1,"content":%s}""".formatted(content)
+    ));
     JsonAssertions.assertThatJson(jsonBody).inPath("$.author.username").isEqualTo(username);
   }
 
