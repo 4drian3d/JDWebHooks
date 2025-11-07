@@ -11,7 +11,7 @@ The following API calls are supported:
 - [ ] [Get Webhook Message](https://discord.com/developers/docs/resources/webhook#get-webhook-message)
 - [ ] [Edit Webhook Message](https://discord.com/developers/docs/resources/webhook#edit-webhook-message)
 - [ ] [Delete Webhook Message](https://discord.com/developers/docs/resources/webhook#delete-webhook-message)
-- [ ] [Get Webhook with Token](https://discord.com/developers/docs/resources/webhook#get-webhook-with-token)
+- [x] [Get Webhook with Token](https://discord.com/developers/docs/resources/webhook#get-webhook-with-token)
 - [ ] [Modify Webhook with Token](https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token)
 - [ ] [Delete Webhook with Token](https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token)
 
@@ -154,6 +154,16 @@ final Component container = Component.container().components(textComponent, medi
 final WebHookExecution webHook = WebHookExecution.builder()
         .component(container)
         .build();
+```
+
+#### Get WebHook Data
+
+```java
+final WebHookClient client = WebHookClient.from("id", "token");
+
+client.getWebHookData().thenAccept(webHookData -> {
+  final String webHookName = webHookData.name();
+});
 ```
 
 ## Testing
