@@ -1,4 +1,4 @@
-package io.github._4drian3d.jdwebhooks.serializer;
+package io.github._4drian3d.jdwebhooks.json.serializer;
 
 import com.google.gson.JsonObject;
 import org.jspecify.annotations.NonNull;

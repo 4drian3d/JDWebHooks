@@ -30,6 +30,8 @@ public sealed interface WebHookClient permits WebHookClientImpl {
    */
   CompletableFuture<HttpResponse<String>> executeWebHook(final Consumer<WebHookExecution.Builder> builderConsumer);
 
+  CompletableFuture<WebHookData> getWebHookData();
+
   /**
    * Creates a new WebHookClientImpl based on a {@link URI}.
    *
@@ -52,7 +54,7 @@ public sealed interface WebHookClient permits WebHookClientImpl {
   static WebHookClient fromURL(final String uri, final String agent) {
     requireNonNull(uri);
     requireNonNull(agent);
-    final Pattern webhookURLPattern = Pattern.compile("^https:\\\\/\\\\/discord\\\\.com\\\\/api\\\\/webhooks\\\\/(\\\\d{17,20})\\\\/([a-zA-Z0-9_-]+)$");
+    final Pattern webhookURLPattern = Pattern.compile("^https://discord\\.com/api/webhooks/(\\d{17,20})/([a-zA-Z0-9_-]+)$");
     final Matcher webhookURLMatcher = webhookURLPattern.matcher(uri);
     if (webhookURLMatcher.matches()) {
       final String webhookId = webhookURLMatcher.group(1);

@@ -4,9 +4,10 @@ import com.google.gson.Gson;
 import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import io.github._4drian3d.jdwebhooks.http.HTTPMultiPartBody;
 import io.github._4drian3d.jdwebhooks.http.MultiPartRecord;
-import io.github._4drian3d.jdwebhooks.serializer.GsonProvider;
+import io.github._4drian3d.jdwebhooks.json.serializer.GsonProvider;
 import org.jspecify.annotations.NonNull;
 
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -62,7 +63,19 @@ record WebHookClientImpl(
         .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8));
     }
 
-    return this.httpClient.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+    return this.httpClient.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+  }
+
+  @NonNull
+  @Override
+  public CompletableFuture<WebHookData> getWebHookData() {
+    final String webHookURL = "https://discord.com/api/webhooks/%s/%s".formatted(webhookID, webHookToken);
+    final HttpRequest request = HttpRequest.newBuilder(URI.create(webHookURL))
+        .header("User-Agent", this.userAgent)
+        .GET()
+        .build();
+    return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
+        .thenApply(response -> gson.fromJson(response.body(), WebHookData.class));
   }
 
   @NonNull

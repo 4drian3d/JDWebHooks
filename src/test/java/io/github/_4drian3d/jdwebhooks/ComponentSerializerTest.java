@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import io.github._4drian3d.jdwebhooks.component.*;
 import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import io.github._4drian3d.jdwebhooks.media.URLMediaReference;
-import io.github._4drian3d.jdwebhooks.serializer.GsonProvider;
+import io.github._4drian3d.jdwebhooks.json.serializer.GsonProvider;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import org.junit.jupiter.api.Test;
 
