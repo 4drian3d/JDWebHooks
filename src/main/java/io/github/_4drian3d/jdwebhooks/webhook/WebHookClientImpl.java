@@ -4,18 +4,16 @@ import com.google.gson.Gson;
 import io.github._4drian3d.jdwebhooks.media.FileAttachment;
 import io.github._4drian3d.jdwebhooks.http.HTTPMultiPartBody;
 import io.github._4drian3d.jdwebhooks.http.MultiPartRecord;
-import io.github._4drian3d.jdwebhooks.property.QueryParameters;
 import io.github._4drian3d.jdwebhooks.serializer.GsonProvider;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 import static java.util.Objects.*;
 
@@ -23,24 +21,29 @@ import static java.util.Objects.*;
  * An object capable of sending requests to publish WebHooks in a given Discord channel.
  */
 @SuppressWarnings("unused")
-record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpClient httpClient) implements WebHookClient {
-  static final String BASE_URL = "https://discord.com/api/webhooks/%s/%s?with_components=true";
+record WebHookClientImpl(
+    String webhookID,
+    String webHookToken,
+    String userAgent,
+    Gson gson,
+    HttpClient httpClient
+) implements WebHookClient {
   static final String DEFAULT_AGENT = "github/4drian3d/JDWebhooks";
 
-  WebHookClientImpl(String webhookURL, String userAgent) {
-    this(webhookURL, userAgent, GsonProvider.provide(), HttpClient.newBuilder()
+  WebHookClientImpl(String webhookID, String webHookToken, String userAgent) {
+    this(webhookID, webHookToken, userAgent, GsonProvider.provide(), HttpClient.newBuilder()
         .executor(Executors.newVirtualThreadPerTaskExecutor()).build());
   }
 
   @NonNull
   @Override
-  public CompletableFuture<HttpResponse<String>> sendWebHook(final @NonNull WebHook webHook) {
+  public CompletableFuture<HttpResponse<String>> executeWebHook(final @NonNull WebHookExecution webHook) {
     requireNonNull(webHook, "webhook");
 
     final String json = gson.toJson(webHook);
 
     final HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-        .uri(encodeURL(webHook.queryParameters()))
+        .uri(((WebHookExecutionImpl) webHook).encodeURL(this))
         .header("User-Agent", this.userAgent);
 
     final List<FileAttachment> attachments = webHook.fileAttachments();
@@ -62,47 +65,27 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
     return this.httpClient.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
   }
 
-  private URI encodeURL(final @Nullable QueryParameters queryParameters) {
-    final StringBuilder queryBuilder = new StringBuilder();
-    if (queryParameters != null && (queryParameters.waitForMessage() != null || queryParameters.threadId() != null)) {
-      if (queryParameters.waitForMessage() != null) {
-        queryBuilder.append("&wait=").append(queryParameters.waitForMessage());
-      }
-      if (queryParameters.threadId() != null) {
-        queryBuilder.append("&thread_id=").append(queryParameters.threadId());
-      }
-      return URI.create(webhookURL + queryBuilder);
-    }
-    return URI.create(webhookURL);
+  @NonNull
+  @Override
+  public CompletableFuture<HttpResponse<String>> executeWebHook(@NonNull Consumer<WebHookExecution.Builder> builderConsumer) {
+    final WebHookExecution.Builder builder = new WebHookExecutionImpl.Builder();
+    builderConsumer.accept(builder);
+    return this.executeWebHook(builder.build());
   }
 
 
   static final class Builder implements WebHookClient.Builder {
-    private String uri;
+    private String webHookID;
+    private String webHookToken;
     private String agent;
-
-    @Override
-    @NonNull
-    public Builder uri(@NonNull String uri) {
-      requireNonNull(uri, "uri");
-      if (!uri.contains("?with_components=true")) {
-        uri += "?with_components=true";
-      }
-      try {
-        new URI(uri);
-        this.uri = uri;
-      } catch (Exception e) {
-        throw new IllegalArgumentException("Invalid URI provided", e);
-      }
-      return this;
-    }
 
     @Override
     @NonNull
     public Builder credentials(final @NonNull String id, final @NonNull String token) {
       requireNonNull(id, "id");
       requireNonNull(token, "token");
-      this.uri(BASE_URL.formatted(id, token));
+      this.webHookID = id;
+      this.webHookToken = token;
       return this;
     }
 
@@ -117,9 +100,10 @@ record WebHookClientImpl(String webhookURL, String userAgent, Gson gson, HttpCli
     @Override
     @NonNull
     public WebHookClientImpl build() {
-      requireNonNull(uri, "uri");
+      requireNonNull(webHookID, "WebHookExecution ID");
+      requireNonNull(webHookToken, "WebHookExecution Token");
       requireNonNull(agent, "agent");
-      return new WebHookClientImpl(uri, agent);
+      return new WebHookClientImpl(webHookID, webHookToken, agent);
     }
   }
 }

@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 import java.net.URI;
 import java.util.List;
 
-public sealed interface WebHook permits WebHookImpl {
+public sealed interface WebHookExecution permits WebHookExecutionImpl {
 
   @Nullable
   QueryParameters queryParameters();
@@ -41,23 +41,23 @@ public sealed interface WebHook permits WebHookImpl {
   Boolean suppressNotifications();
 
   /**
-   * Creates a new WebHookImpl Builder.
+   * Creates a new WebHookExecution Builder.
    *
-   * @return a new WebHookImpl builder
+   * @return a new WebHookExecution builder
    */
-  static WebHook.Builder builder() {
-    return new WebHookImpl.Builder();
+  static WebHookExecution.Builder builder() {
+    return new WebHookExecutionImpl.Builder();
   }
 
   /**
-   * WebHookImpl Builder
+   * WebHookExecutionImpl Builder
    */
   @NullMarked
-  sealed interface Builder permits WebHookImpl.Builder {
+  sealed interface Builder permits WebHookExecutionImpl.Builder {
 
     Builder queryParameters(QueryParameters queryParameters);
     /**
-     * Sets the override username of this WebHookImpl.
+     * Sets the override username of this WebHookExecution.
      *
      * @param username the override username
      * @return this builder
@@ -65,7 +65,7 @@ public sealed interface WebHook permits WebHookImpl {
     Builder username(final @Nullable String username);
 
     /**
-     * Sets the Avatar URL of this WebHookImpl
+     * Sets the Avatar URL of this WebHookExecution
      *
      * @param avatarURL the Avatar URL
      * @return this builder
@@ -73,7 +73,7 @@ public sealed interface WebHook permits WebHookImpl {
     Builder avatarURL(final @Nullable String avatarURL);
 
     /**
-     * Sets the Avatar URL of this WebHookImpl
+     * Sets the Avatar URL of this WebHookExecution
      *
      * @param avatarURL the Avatar URL
      * @return this builder
@@ -100,6 +100,6 @@ public sealed interface WebHook permits WebHookImpl {
 
     Builder suppressNotifications(final @Nullable Boolean suppressNotifications);
 
-    WebHook build();
+    WebHookExecution build();
   }
 }

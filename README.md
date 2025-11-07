@@ -43,7 +43,7 @@ import java.util.concurrent.CompletableFuture;
 void main() {
   final WebHookClient client = WebHookClient.from("id", "token"); // or WebHookClient.from(url);
 
-  final WebHook webHook = WebHook.builder()
+  final WebHookExecution webHook = WebHookExecution.builder()
       .username("4drian3d was here")
       .component(
           Component.container()
@@ -68,9 +68,9 @@ void main() {
 #### Text Display Component
 
 ```java
-final var component = Component.textDisplay("Text Display Component");
+final Component component = Component.textDisplay("Text Display Component");
 
-final WebHook webHook = WebHook.builder()
+final WebHookExecution webHook = WebHookExecution.builder()
         .component(component)
         .build();
 ```
@@ -78,16 +78,16 @@ final WebHook webHook = WebHook.builder()
 #### Section Component
 
 ```java
-final var textComponents = new ArrayList<TextDisplayComponent>();
+final List<TextDisplayComponent> textComponents = new ArrayList<>();
 for (int i = 1; i <=3; i++) {
   textComponents.add(Component.textDisplay("Text Component "+i).build());
 }
 
-final var avatarUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
-final var accessory = Component.thumbnail().media(URLMediaReference.from(avatarUrl)).spoiler(true).description("Hi :)").build();
+final Component avatarUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
+final Component accessory = Component.thumbnail().media(URLMediaReference.from(avatarUrl)).spoiler(true).description("Hi :)").build();
 
-final var component = Component.section().components(textComponents).accessory(accessory).build();
-final WebHook webHook = WebHook.builder()
+final Component component = Component.section().components(textComponents).accessory(accessory).build();
+final WebHookExecution webHook = WebHookExecution.builder()
         .component(component)
         .build();
 ```
@@ -95,15 +95,15 @@ final WebHook webHook = WebHook.builder()
 #### Media Gallery Component
 
 ```java
-final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
-for (int i = 1; i <=9; i++) {
+final List<MediaGalleryComponent.Item> mediaItems = new ArrayList<>();
+for (int i = 1; i <= 9; i++) {
   final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
   final var mediaItem = MediaGalleryComponent.item(imageUrl).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
   mediaItems.add(mediaItem);
 }
 
-final var component = Component.mediaGallery().items(mediaItems).build();
-final WebHook webHook = WebHook.builder()
+final Component component = Component.mediaGallery().items(mediaItems).build();
+final WebHookExecution webHook = WebHookExecution.builder()
         .component(component)
         .build();
 ```
@@ -113,9 +113,9 @@ final WebHook webHook = WebHook.builder()
 ```java
 Path file = Path.of("build.gradle.kts"); // get your file from somewhere
 
-final var attachment = FileAttachment.fromFile(file);
+final FileAttachment attachment = FileAttachment.fromFile(file);
 
-final WebHook webHook = WebHook.builder()
+final WebHookExecution webHook = WebHookExecution.builder()
     .components(
         Component.textDisplay("Secret file"),
         Component.file().file(attachment).spoiler(true).build()
@@ -127,11 +127,11 @@ final WebHook webHook = WebHook.builder()
 #### Separator Component
 
 ```java
-final var text1 = Component.textDisplay("Above the separator");
-final var text2 = Component.textDisplay("Below the separator");
-final var separator = Component.separator().spacing(SeparatorComponent.Spacing.LARGE).build();
+final Component text1 = Component.textDisplay("Above the separator");
+final Component text2 = Component.textDisplay("Below the separator");
+final Component separator = Component.separator().spacing(SeparatorComponent.Spacing.LARGE).build();
 
-final WebHook webHook = WebHook.builder()
+final WebHookExecution webHook = WebHookExecution.builder()
         .components(text1, separator, text2)
         .build();
 ```
@@ -139,19 +139,19 @@ final WebHook webHook = WebHook.builder()
 #### Container Component
 
 ```java
-final var textComponent = Component.textDisplay("Inside Container").build();
+final Component textComponent = Component.textDisplay("Inside Container").build();
 
-final var mediaItems = new ArrayList<MediaGalleryComponent.Item>();
+final List<MediaGalleryComponent.Item> mediaItems = new ArrayList<>();
 for (int i = 1; i <=9; i++) {
     final var imageUrl = "https://api.dicebear.com/9.x/bottts/png?seed=" + UUID.randomUUID();
     final var mediaItem = MediaGalleryComponent.itemBuilder().media(URLMediaReference.from(imageUrl)).description("Image " + i).spoiler((i - 1) % 2 == 0).build();
     mediaItems.add(mediaItem);
 }
-final var mediaComponent = Component.mediaGallery().items(mediaItems).build();
+final Component mediaComponent = Component.mediaGallery().items(mediaItems).build();
 
-final var container = Component.container().components(textComponent, mediaComponent).accentColor(0x123456).spoiler(true).build();
+final Component container = Component.container().components(textComponent, mediaComponent).accentColor(0x123456).spoiler(true).build();
 
-final WebHook webHook = WebHook.builder()
+final WebHookExecution webHook = WebHookExecution.builder()
         .component(container)
         .build();
 ```

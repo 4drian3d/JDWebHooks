@@ -1,5 +1,6 @@
 package io.github._4drian3d.jdwebhooks.property;
 
+import io.github._4drian3d.jdwebhooks.webhook.WebHookExecution;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -11,7 +12,7 @@ import java.util.List;
  * For example, if you want to ping everyone, including it in this field is not enough, the mention format ({@code @everyone}) must also be present in the content of the message or its components.
  * <br>
  * To mention roles and notify their members, the role's mentionable field must be set to true
- * Setting the {@link io.github._4drian3d.jdwebhooks.webhook.WebHook.Builder#suppressNotifications(Boolean)} flag
+ * Setting the {@link WebHookExecution.Builder#suppressNotifications(Boolean)} flag
  * when sending a message will disable push notifications and only cause a notification badge
  */
 public sealed interface AllowedMentions permits AllowedMentionsImpl {

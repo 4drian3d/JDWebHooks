@@ -1,6 +1,7 @@
 package io.github._4drian3d.jdwebhooks.media;
 
 import io.github._4drian3d.jdwebhooks.component.Component;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookExecution;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -14,8 +15,8 @@ import static java.util.Objects.requireNonNull;
  *
  * @see io.github._4drian3d.jdwebhooks.component.FileComponent
  * @see MediaReference
- * @see io.github._4drian3d.jdwebhooks.webhook.WebHook.Builder#components(Component...)
- * @see io.github._4drian3d.jdwebhooks.webhook.WebHook.Builder#fileAttachments(FileAttachment...)
+ * @see WebHookExecution.Builder#components(Component...)
+ * @see WebHookExecution.Builder#fileAttachments(FileAttachment...)
  * @see io.github._4drian3d.jdwebhooks.component.ThumbnailComponent.Builder#media(MediaReference)
  * @see io.github._4drian3d.jdwebhooks.component.MediaGalleryComponent.Item.Builder#media(MediaReference)
  */

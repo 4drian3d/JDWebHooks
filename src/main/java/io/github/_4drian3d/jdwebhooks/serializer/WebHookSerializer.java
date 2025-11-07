@@ -2,16 +2,16 @@ package io.github._4drian3d.jdwebhooks.serializer;
 
 import com.google.gson.*;
 import io.github._4drian3d.jdwebhooks.media.FileAttachment;
-import io.github._4drian3d.jdwebhooks.webhook.WebHook;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookExecution;
 import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-public final class WebHookSerializer implements JsonSerializer<WebHook>, CommonSerializer {
+public final class WebHookSerializer implements JsonSerializer<WebHookExecution>, CommonSerializer {
   @Override
   public JsonElement serialize(
-      final WebHook src,
+      final WebHookExecution src,
       final Type typeOfSrc,
       final JsonSerializationContext context
   ) {

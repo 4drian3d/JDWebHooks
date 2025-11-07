@@ -16,7 +16,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Object containing all available items to display in a Discord WebHookImpl.
+ * Object containing all available items to display in a Discord WebHookExecution.
  *
  * @param username        the username to overwrite the webhook name
  * @param avatarURL       the avatar icon url
@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
  * @param threadName      the thread to be created from this webhook
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-record WebHookImpl(
+record WebHookExecutionImpl(
     @Nullable QueryParameters queryParameters,
     @Nullable String username,
     @Nullable URI avatarURL,
@@ -35,9 +35,25 @@ record WebHookImpl(
     @NonNull List<Component> components,
     @Nullable List<FileAttachment> fileAttachments,
     @Nullable Boolean suppressNotifications
-) implements WebHook {
+) implements WebHookExecution {
+  static final String BASE_URL = "https://discord.com/api/webhooks/%s/%s?with_components=true";
 
-  static final class Builder implements WebHook.Builder {
+  URI encodeURL(final WebHookClientImpl client) {
+    final StringBuilder queryBuilder = new StringBuilder();
+    final String urlWithCredentials = BASE_URL.formatted(client.webhookID(), client.webHookToken());
+    if (queryParameters != null && (queryParameters.waitForMessage() != null || queryParameters.threadId() != null)) {
+      if (queryParameters.waitForMessage() != null) {
+        queryBuilder.append("&wait=").append(queryParameters.waitForMessage());
+      }
+      if (queryParameters.threadId() != null) {
+        queryBuilder.append("&thread_id=").append(queryParameters.threadId());
+      }
+      return URI.create(urlWithCredentials + queryBuilder);
+    }
+    return URI.create(urlWithCredentials);
+  }
+
+  static final class Builder implements WebHookExecution.Builder {
     private QueryParameters queryParameters;
     private String username;
     private URI avatarURL;
@@ -162,7 +178,7 @@ record WebHookImpl(
 
     @Override
     @NonNull
-    public WebHookImpl build() {
+    public WebHookExecutionImpl build() {
       if (this.components.isEmpty()) {
         throw new IllegalArgumentException("No component provided");
       }
@@ -172,7 +188,7 @@ record WebHookImpl(
           break;
         }
       }
-      return new WebHookImpl(
+      return new WebHookExecutionImpl(
           this.queryParameters,
           this.username,
           this.avatarURL,

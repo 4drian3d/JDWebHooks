@@ -1,6 +1,7 @@
 package io.github._4drian3d.jdwebhooks.component;
 
 import io.github._4drian3d.jdwebhooks.property.AllowedMentions;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookExecution;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -12,7 +13,7 @@ import org.jspecify.annotations.NullMarked;
  *
  * @apiNote When sent in a message, pingable mentions ({@code @user}, {@code @role}, etc) present in this component
  *  will ping and send notifications based on the value of the {@link io.github._4drian3d.jdwebhooks.property.AllowedMentions} object
- *  set in {@link io.github._4drian3d.jdwebhooks.webhook.WebHook.Builder#allowedMentions(AllowedMentions)}.
+ *  set in {@link WebHookExecution.Builder#allowedMentions(AllowedMentions)}.
  */
 @NullMarked
 public sealed interface TextDisplayComponent extends Component, ContainerableComponent permits TextDisplayComponentImpl {

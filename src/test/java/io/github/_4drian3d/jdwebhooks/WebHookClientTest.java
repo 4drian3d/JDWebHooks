@@ -7,7 +7,7 @@ import io.github._4drian3d.jdwebhooks.component.SeparatorComponent;
 import io.github._4drian3d.jdwebhooks.component.TextDisplayComponent;
 import io.github._4drian3d.jdwebhooks.media.URLMediaReference;
 import io.github._4drian3d.jdwebhooks.property.QueryParameters;
-import io.github._4drian3d.jdwebhooks.webhook.WebHook;
+import io.github._4drian3d.jdwebhooks.webhook.WebHookExecution;
 import io.github._4drian3d.jdwebhooks.webhook.WebHookClient;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import net.javacrumbs.jsonunit.core.Option;
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,10 +30,10 @@ class WebHookClientTest {
 
   @BeforeAll
   static void beforeAll() {
-    client = WebHookClient.builder()
-        .uri(System.getenv("DISCORD_WEBHOOK_URL"))
-        .agent("JDWebHooks by 4drian3d | JUnit Testing")
-        .build();
+    client = WebHookClient.fromURL(
+        System.getenv("DISCORD_WEBHOOK_URL"),
+        "JDWebHooks by 4drian3d | JUnit Testing"
+    );
   }
 
   @Test
@@ -44,11 +43,11 @@ class WebHookClientTest {
 
   @Test
   void testSuccess() {
-    final WebHook webHook = WebHook.builder()
+    final WebHookExecution webHook = WebHookExecution.builder()
         .component(Component.textDisplay().content("testSuccess").build())
         .build();
 
-    final var response = client.sendWebHook(webHook).join();
+    final var response = client.executeWebHook(webHook).join();
     assertEquals(204, response.statusCode());
   }
 
@@ -57,13 +56,10 @@ class WebHookClientTest {
     final String username = "testing123";
     final String content = "testBasicMessage";
 
-    final WebHook webHook = WebHook.builder()
-        .username(username)
+    final var response = client.executeWebHook(builder -> builder.username(username)
         .component(Component.textDisplay().content(content).build())
         .queryParameters(QueryParameters.builder().waitForMessage(true).build())
-        .build();
-
-    final var response = client.sendWebHook(webHook).join();
+        .build()).join();
     assertEquals(200, response.statusCode());
 
     final var jsonBody = JsonParser.parseString(response.body());
@@ -74,19 +70,15 @@ class WebHookClientTest {
         .isArray()
         .contains(json("""
             {"type":10,"id":1,"content":%s}""".formatted(content)
-    ));
+        ));
     JsonAssertions.assertThatJson(jsonBody).inPath("$.author.username").isEqualTo(username);
   }
 
   @Test
-  void testTextDisplayComponent() throws ExecutionException, InterruptedException {
+  void testTextDisplayComponent() {
     final var component = Component.textDisplay().content("Text Display Component").build();
 
-    final WebHook webHook = WebHook.builder()
-        .component(component)
-        .build();
-
-    final var response = client.sendWebHook(webHook).get();
+    final var response = client.executeWebHook(builder -> builder.component(component).build()).join();
     assertEquals(204, response.statusCode());
   }
 
@@ -101,11 +93,11 @@ class WebHookClientTest {
     final var accessory = Component.thumbnail().media(URLMediaReference.from(avatarUrl)).spoiler(true).description("Hi :)").build();
 
     final var component = Component.section().components(textComponents).accessory(accessory).build();
-    final WebHook webHook = WebHook.builder()
+    final WebHookExecution webHook = WebHookExecution.builder()
         .component(component)
         .build();
 
-    final var response = client.sendWebHook(webHook).join();
+    final var response = client.executeWebHook(webHook).join();
     assertEquals(204, response.statusCode());
   }
 
@@ -120,11 +112,11 @@ class WebHookClientTest {
     }
 
     final var component = Component.mediaGallery().items(mediaItems).build();
-    final WebHook webHook = WebHook.builder()
+    final WebHookExecution webHook = WebHookExecution.builder()
         .component(component)
         .build();
 
-    final var response = client.sendWebHook(webHook).join();
+    final var response = client.executeWebHook(webHook).join();
     assertEquals(204, response.statusCode());
   }
 
@@ -134,11 +126,11 @@ class WebHookClientTest {
     final var text2 = Component.textDisplay().content("Below the separator").build();
     final var separator = Component.separator().spacing(SeparatorComponent.Spacing.LARGE).build();
 
-    final WebHook webHook = WebHook.builder()
+    final WebHookExecution webHook = WebHookExecution.builder()
         .components(text1, separator, text2)
         .build();
 
-    final var response = client.sendWebHook(webHook).join();
+    final var response = client.executeWebHook(webHook).join();
     assertEquals(204, response.statusCode());
   }
 
@@ -156,11 +148,11 @@ class WebHookClientTest {
 
     final var container = Component.container().components(textComponent, mediaComponent).accentColor(0x123456).spoiler(true).build();
 
-    final WebHook webHook = WebHook.builder()
+    final WebHookExecution webHook = WebHookExecution.builder()
         .component(container)
         .build();
 
-    final var response = client.sendWebHook(webHook).join();
+    final var response = client.executeWebHook(webHook).join();
     assertEquals(204, response.statusCode());
   }
 }

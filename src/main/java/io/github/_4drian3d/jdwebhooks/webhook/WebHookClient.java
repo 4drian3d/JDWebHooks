@@ -5,18 +5,30 @@ import org.jspecify.annotations.NullMarked;
 import java.net.URI;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.github._4drian3d.jdwebhooks.webhook.WebHookClientImpl.DEFAULT_AGENT;
+import static java.util.Objects.requireNonNull;
 
 @NullMarked
 public sealed interface WebHookClient permits WebHookClientImpl {
   /**
-   * Sends the specified WebHookImpl.
+   * Sends the specified WebHookExecution.
    *
    * @param webHook the webhook to send
    * @return a CompletableFuture with the result of this request
    */
-  CompletableFuture<HttpResponse<String>> sendWebHook(final WebHook webHook);
+  CompletableFuture<HttpResponse<String>> executeWebHook(final WebHookExecution webHook);
+
+  /**
+   * Sends the specified WebHookExecution.
+   *
+   * @param builderConsumer the webhook builder consumer used to create a new webhook execution to send
+   * @return a CompletableFuture with the result of this request
+   */
+  CompletableFuture<HttpResponse<String>> executeWebHook(final Consumer<WebHookExecution.Builder> builderConsumer);
 
   /**
    * Creates a new WebHookClientImpl based on a {@link URI}.
@@ -25,11 +37,30 @@ public sealed interface WebHookClient permits WebHookClientImpl {
    * @return a new WebHookClientImpl
    * @throws IllegalArgumentException if the provided URL is invalid
    */
-  static WebHookClient fromURL(String uri) {
-    if (!uri.contains("?with_components=true")) {
-      uri += "?with_components=true";
+  static WebHookClient fromURL(final String uri) {
+    return WebHookClient.fromURL(uri, DEFAULT_AGENT);
+  }
+
+  /**
+   * Creates a new WebHookClient based on a {@link URI}.
+   *
+   * @param uri the webhook url provided
+   * @param agent the http agent to use
+   * @return a new WebHookClient
+   * @throws IllegalArgumentException if the provided URL is invalid
+   */
+  static WebHookClient fromURL(final String uri, final String agent) {
+    requireNonNull(uri);
+    requireNonNull(agent);
+    final Pattern webhookURLPattern = Pattern.compile("^https:\\\\/\\\\/discord\\\\.com\\\\/api\\\\/webhooks\\\\/(\\\\d{17,20})\\\\/([a-zA-Z0-9_-]+)$");
+    final Matcher webhookURLMatcher = webhookURLPattern.matcher(uri);
+    if (webhookURLMatcher.matches()) {
+      final String webhookId = webhookURLMatcher.group(1);
+      final String webhookToken = webhookURLMatcher.group(2);
+      return builder().credentials(webhookId, webhookToken).agent(agent).build();
+    } else {
+      throw new IllegalArgumentException("Invalid URL provided: " + uri);
     }
-    return builder().uri(uri).agent(DEFAULT_AGENT).build();
   }
 
   /**
@@ -41,7 +72,7 @@ public sealed interface WebHookClient permits WebHookClientImpl {
    * @throws IllegalArgumentException if the provided id or token are is invalid
    * @see #fromURL(String)
    */
-  static WebHookClient from(final String id, final String token) {
+  static WebHookClient fromCredentials(final String id, final String token) {
     return builder().credentials(id, token).agent(DEFAULT_AGENT).build();
   }
 
@@ -60,14 +91,6 @@ public sealed interface WebHookClient permits WebHookClientImpl {
    * Builder for the creation of a new WebHookClientImpl.
    */
   sealed interface Builder permits WebHookClientImpl.Builder {
-    /**
-     * Sets the client URI
-     *
-     * @param uri the client uri
-     * @return this builder
-     * @throws IllegalArgumentException if the provided URL is invalid
-     */
-    Builder uri(final String uri);
 
     /**
      * Set credentials for sending webhooks
