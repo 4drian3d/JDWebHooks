@@ -3,14 +3,6 @@ plugins {
     id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     compileOnlyApi(libs.annotations.jspecify)
@@ -31,8 +23,8 @@ tasks {
         options.compilerArgs.add("-Xlint:-processing")
     }
     javadoc {
-        options.encoding = Charsets.UTF_8.name()
         (options as StandardJavadocDocletOptions).apply {
+            encoding = Charsets.UTF_8.name()
             links(
                 "https://docs.oracle.com/en/java/javase/21/docs/api/",
                 "https://www.javadocs.dev/com.google.code.gson/gson/${libs.versions.gson.get()}",
@@ -48,6 +40,9 @@ tasks {
     test {
         useJUnitPlatform()
         environment("DISCORD_WEBHOOK_URL", System.getenv("DISCORD_WEBHOOK_URL"))
+        testLogging {
+            events("passed", "failed")
+        }
     }
 }
 
