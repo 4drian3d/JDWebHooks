@@ -30,6 +30,11 @@ public sealed interface WebHookClient permits WebHookClientImpl {
    */
   CompletableFuture<HttpResponse<String>> executeWebHook(final Consumer<WebHookExecution.Builder> builderConsumer);
 
+  /**
+   * Get information from this webhook.
+   *
+   * @return this webhook data
+   */
   CompletableFuture<WebHookData> getWebHookData();
 
   /**
@@ -116,7 +121,7 @@ public sealed interface WebHookClient permits WebHookClientImpl {
      * Creates a new WebHookClientImpl based on the configuration of this builder
      *
      * @return a new WebHookClientImpl
-     * @throws NullPointerException in case no credentials/uri or user agent have been configured
+     * @throws NullPointerException in case no credentials or user agent have been configured
      */
     WebHookClient build();
   }

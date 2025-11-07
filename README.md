@@ -1,5 +1,7 @@
 # JDWebHooks
 
+*(JavaDiscordWebHooks)*
+
 A library to send Discord WebHooks with Components V2 support easily
 
 ## Discord Compatibility
